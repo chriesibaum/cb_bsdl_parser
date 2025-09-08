@@ -12,7 +12,7 @@ def print_bsr_table(bsdl, bsdl_file):
 def print_cell_info(bsdl, cell):
     print(f'Information for cell: {cell}')
     try:
-        print(f'  cell_num:  {bsdl.get_bsr_cell_num(cell)}')
+        print(f'  data_cell:  {bsdl.get_bsr_data_cell(cell)}')
         print(f'  cell_type: {bsdl.get_bsr_cell_type(cell)}')
         print(f'  cell_desc: {bsdl.get_bsr_cell_desc(cell)}')
         print(f'  cell_func: {bsdl.get_bsr_cell_func(cell)}')

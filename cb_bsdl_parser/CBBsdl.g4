@@ -152,7 +152,7 @@ attr_bsr
 bsr_def
     :
     QUOTES
-    cell_num
+    data_cell
     BRACKET_OPEN
     (bsr_cell0 | bsr_cell1)
     BRACKET_CLOSE
@@ -161,7 +161,7 @@ bsr_def
     AMPERSAND?
     ;
 
-cell_num
+data_cell
     :
     INTEGER
     ;

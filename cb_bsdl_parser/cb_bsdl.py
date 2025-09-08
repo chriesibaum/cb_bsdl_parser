@@ -79,7 +79,7 @@ class CBBsdl():
         for i in range(self.get_bsr_len()):
             bsr_def = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].getText()
 
-            cell_num = int(self.tree.entity().body().attr_bsr()[0].bsr_def()[i].cell_num().getText())
+            data_cell = int(self.tree.entity().body().attr_bsr()[0].bsr_def()[i].data_cell().getText())
 
             if self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0() is not None:
                 cell_type = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_type().getText()
@@ -90,7 +90,7 @@ class CBBsdl():
 
                 cell_func = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_func().getText()
                 cell_val = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_val().getText()
-                ctrl_cell = ''
+                ctrl_cell = 0
 
             elif self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1() is not None:
                 cell_type = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_type().getText()
@@ -101,19 +101,19 @@ class CBBsdl():
 
                 cell_func = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_func().getText()
                 cell_val = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_val().getText()
-                ctrl_cell = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().ctrl_cell().getText()
+                ctrl_cell = int(self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().ctrl_cell().getText())
 
             else:
-                cell_num = 'undef'
+                data_cell = 0
                 cell_type = 'undef'
                 cell_desc = 'undef'
                 cell_func = 'undef'
                 cell_val = 'undef'
-                ctrl_cell = 'undef'
+                ctrl_cell = 0
 
 
             bsr_cell = {
-                'cell_num': cell_num,
+                'data_cell': data_cell,
                 'cell_type': cell_type,
                 'cell_desc': cell_desc,
                 'cell_func': cell_func,
@@ -123,7 +123,7 @@ class CBBsdl():
 
 
             if cell_desc == '*':
-                cell_desc = f'cell_{cell_num}'
+                cell_desc = f'cell_{data_cell}'
 
             if cell_func.upper() in ['INPUT', 'OBSERVE_ONLY']:
                 key_a = 'in'
@@ -162,7 +162,7 @@ class CBBsdl():
 
             if cell_desc.endswith('_out'):
                 if self.verbose:
-                    print(f'Control cell found: {cell_desc}, cell_num: {cell['cell_num']} ctrl_cell: {cell['ctrl_cell']}   ', end='')
+                    print(f'Control cell found: {cell_desc}, data_cell: {cell['data_cell']} ctrl_cell: {cell['ctrl_cell']}   ', end='')
 
                 for key, ccell in self.bsr.items():
                     if ccell['ctrl_cell'] != '' and int(ccell['ctrl_cell']) == int(cell['ctrl_cell']):
@@ -179,14 +179,14 @@ class CBBsdl():
                     if self.verbose:
                         print(f'modify key: {old_key_ctrl_cell} -> {new_key_ctrl_cell}  ')
 
-                    if int(cell['cell_num']) != int(cell['ctrl_cell']):
+                    if int(cell['data_cell']) != int(cell['ctrl_cell']):
                         self.bsr[new_key_ctrl_cell] = self.bsr.pop(old_key_ctrl_cell)
                     else:
                         print(f'Warning: {cell['cell_desc']} does not have a separate ctrl_cell')
 
 
-        # Sort the BSR content by cell_num
-        self.bsr = OrderedDict(sorted(self.bsr.items(), key=lambda t: t[1]['cell_num']))
+        # Sort the BSR content by data_cell
+        self.bsr = OrderedDict(sorted(self.bsr.items(), key=lambda t: t[1]['data_cell']))
 
     def get_bsr(self):
         """Returns the BSR content."""
@@ -204,18 +204,18 @@ class CBBsdl():
 
             if self.bsr[bsr_cell]['cell_func'] != 'internal':
                 print(f'  {bsr_cell:10s} '\
-                      f'{self.bsr[bsr_cell]['cell_num']:3d}   '\
+                      f'{self.bsr[bsr_cell]['data_cell']:3d}   '\
                       f'type: {self.bsr[bsr_cell]['cell_type']:4s}   '\
                       f'desc: {self.bsr[bsr_cell]['cell_desc']:6s}   '\
                       f'func: {self.bsr[bsr_cell]['cell_func']:9s}   '\
                       f'val: {self.bsr[bsr_cell]['cell_val']:1s}   '\
-                      f'ctrl_cell: {self.bsr[bsr_cell]['ctrl_cell']:3s}')
+                      f'ctrl_cell: {self.bsr[bsr_cell]['ctrl_cell']:3d}')
 
 
-    def get_bsr_cell_num(self, cell_desc):
+    def get_bsr_data_cell(self, cell_desc):
         """Returns the cell number for a given cell description."""
         if cell_desc in self.bsr:
-            return self.bsr[cell_desc]['cell_num']
+            return self.bsr[cell_desc]['data_cell']
         else:
             raise ValueError(f"Cell description {cell_desc} not found in BSR content.")
 

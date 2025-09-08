@@ -35,12 +35,12 @@ class Test_BsdlParser:
         self.expected_bsr_len = int(request.param['bsr_len'])
         self.check_bsr = request.param.get('check_bsr', True)
         self.expected_bsr_cell = request.param.get('bsr_cell', '')
-        self.expected_bsr_cell_num = request.param.get('bsr_cell_num', '')
+        self.expected_bsr_data_cell = request.param.get('bsr_data_cell', '')
         self.expected_bsr_cell_type = request.param.get('bsr_cell_type', '')
         self.expected_bsr_cell_desc = request.param.get('bsr_cell_desc', '')
         self.expected_bsr_cell_func = request.param.get('bsr_cell_func', '')
         self.expected_bsr_cell_val = request.param.get('bsr_cell_val', '')
-        self.expected_bsr_ctrl_cell = request.param.get('bsr_ctrl_cell', '')
+        self.expected_bsr_ctrl_cell = request.param.get('bsr_ctrl_cell', 0)
 
 
         self.bdsl = CBBsdl(self.bsdl_file,
@@ -93,16 +93,19 @@ class Test_BsdlParser:
         # print(bsr)
         print(f'bsr[{self.expected_bsr_cell}: {bsr[self.expected_bsr_cell]}]')
 
-        bsr_cell_num = self.bdsl.get_bsr_cell_num(self.expected_bsr_cell)
+        # bsr_cell = self.bdsl.get_bsr_cell(self.expected_bsr_cell)
+        bsr_data_cell = self.bdsl.get_bsr_data_cell(self.expected_bsr_cell)
         bsr_cell_type = self.bdsl.get_bsr_cell_type(self.expected_bsr_cell)
         bsr_cell_desc = self.bdsl.get_bsr_cell_desc(self.expected_bsr_cell)
         bsr_cell_func = self.bdsl.get_bsr_cell_func(self.expected_bsr_cell)
         bsr_cell_val = self.bdsl.get_bsr_cell_val(self.expected_bsr_cell)
         bsr_ctrl_cell = self.bdsl.get_bsr_ctrl_cell(self.expected_bsr_cell)
 
-        assert bsr_cell_num == self.expected_bsr_cell_num
+        # assert bsr_cell == self.expected_bsr_cell
+        assert bsr_data_cell == self.expected_bsr_data_cell
         assert bsr_cell_type == self.expected_bsr_cell_type
         assert bsr_cell_desc == self.expected_bsr_cell_desc
         assert bsr_cell_func == self.expected_bsr_cell_func
         assert bsr_cell_val == self.expected_bsr_cell_val
-        assert bsr_ctrl_cell == self.expected_bsr_ctrl_cell
+        if self.expected_bsr_ctrl_cell is not None:
+            assert bsr_ctrl_cell == self.expected_bsr_ctrl_cell
