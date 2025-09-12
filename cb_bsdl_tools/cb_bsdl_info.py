@@ -21,11 +21,17 @@ def print_cell_info(bsdl, cell):
     except Exception as e:
         print(f'Error retrieving information for cell {cell}: {e}')
 
+def print_pin_map(bsdl):
+    print('pin map:')
+    for pin_num, pin_desc in bsdl.get_pin_map().items():
+        print(f'  {pin_num}: {pin_desc}')
+
 def main():
     parser = argparse.ArgumentParser(description='Process a BSDL file.', usage='%(prog)s <bsdl_file> [--cell CELL] [--print-bsr-table]')
     parser.add_argument('bsdl_file', type=str, help='Path to the BSDL file')
     parser.add_argument('-c', '--cell', type=str, default=None, help='Cell name to query')
-    parser.add_argument('-p', '--print-bsr-table', action='store_true', help='Print the BSR table')
+    parser.add_argument('-b', '--print-bsr-table', action='store_true', help='Print the BSR table')
+    parser.add_argument('-p', '--print-pin-map', action='store_true', help='Print the pin map')
 
     if len(sys.argv) == 1:
         parser.print_usage()
@@ -41,6 +47,9 @@ def main():
 
     if args.cell is not None:
         print_cell_info(bsdl, args.cell)
+
+    if args.print_pin_map:
+        print_pin_map(bsdl)
 
 if __name__ == '__main__':
     main()

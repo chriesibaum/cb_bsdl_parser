@@ -34,7 +34,8 @@ body
     (
       (
         generic_phys_pin_map
-      | log_port_desc
+      | port_dec
+      | pin_map
       | attr_bsr_len
       | attr_bsr
       | undef_part
@@ -85,8 +86,8 @@ bsr_len
     ;
 
 
-// logical port description
-log_port_desc
+// port declaration
+port_dec
     :
     PORT
     BRACKET_OPEN
@@ -134,6 +135,47 @@ bit_vector
     bit_range
     BRACKET_CLOSE
     ;
+
+pin_map
+    :
+    CONSTANT
+    phys_pin_map_name
+    COLON
+    PIN_MAP_STRING
+    EQUALS
+    (pin_def)+
+    SEMICOLON
+    ;
+
+
+pin_def
+    :
+    QUOTES
+    pin_desc
+    COLON
+    (pin_num | pin_num_arr)
+    COMMA?
+    QUOTES
+    AMPERSAND?
+    ;
+
+pin_desc
+    :
+    identifier
+    ;
+
+pin_num
+    :
+    (identifier | number)
+    ;
+
+pin_num_arr
+    :
+    BRACKET_OPEN
+    (pin_num COMMA?)+
+    BRACKET_CLOSE
+    ;
+
 
 // attribute BOUNDARY_REGISTER
 attr_bsr
@@ -189,7 +231,7 @@ bsr_cell1
     COMMA
     ctrl_cell
     COMMA
-    number
+    disval
     COMMA
     identifier
     ;
@@ -220,6 +262,11 @@ cell_val
     ;
 
 ctrl_cell
+    :
+    number
+    ;
+
+disval
     :
     number
     ;

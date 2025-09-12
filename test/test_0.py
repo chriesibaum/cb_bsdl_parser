@@ -41,7 +41,7 @@ class Test_BsdlParser:
         self.expected_bsr_cell_func = request.param.get('bsr_cell_func', '')
         self.expected_bsr_cell_val = request.param.get('bsr_cell_val', '')
         self.expected_bsr_ctrl_cell = request.param.get('bsr_ctrl_cell', 0)
-
+        self.expected_bsr_disval = request.param.get('bsr_disval', 0)
 
         self.bdsl = CBBsdl(self.bsdl_file,
                            check_bsr=self.check_bsr)
@@ -100,6 +100,7 @@ class Test_BsdlParser:
         bsr_cell_func = self.bdsl.get_bsr_cell_func(self.expected_bsr_cell)
         bsr_cell_val = self.bdsl.get_bsr_cell_val(self.expected_bsr_cell)
         bsr_ctrl_cell = self.bdsl.get_bsr_ctrl_cell(self.expected_bsr_cell)
+        bsr_disval = self.bdsl.get_bsr_disval(self.expected_bsr_cell)
 
         # assert bsr_cell == self.expected_bsr_cell
         assert bsr_data_cell == self.expected_bsr_data_cell
@@ -109,3 +110,4 @@ class Test_BsdlParser:
         assert bsr_cell_val == self.expected_bsr_cell_val
         if self.expected_bsr_ctrl_cell is not None:
             assert bsr_ctrl_cell == self.expected_bsr_ctrl_cell
+            assert bsr_disval == self.expected_bsr_disval

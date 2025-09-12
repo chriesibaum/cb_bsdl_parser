@@ -42,8 +42,14 @@ install: build
 	@pip install dist/cb_bsdl_parser*.whl --force-reinstall
 
 
+deploy: build
+	$(E) Uploading package to PyPI...
+	twine upload dist/*
+
 clean:
 	make -C ./cb_bsdl_parser/ clean
 	@rm -rf __pycache__
 	@rm -rf */__pycache__
+
+mr_proper: clean
 	@rm -rf ./$(BUILD_DIR)

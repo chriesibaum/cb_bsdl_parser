@@ -12,6 +12,9 @@ BS_LEN           : 'BOUNDARY_LENGTH' ;
 BS_REG           : 'BOUNDARY_REGISTER' ;
 OF               : 'of' ;
 USE              : 'use' ;
+CONSTANT         : 'constant';
+PIN_MAP_STRING   : 'PIN_MAP_STRING';
+
 
 PORT             : 'port' ;
 INOUT            : 'inout' ;

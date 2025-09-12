@@ -28,6 +28,7 @@ class CBBsdl():
             if self.check_bsr_length() != True:
                 raise ValueError("BSR length is not present or inconsistent in the BSDL content.")
 
+        self.build_pin_map_content()
         self.build_bsr_content()
         self.compile_bsr_ctrl_cells()
 
@@ -71,6 +72,35 @@ class CBBsdl():
         """Extracts the BSR length from the BSDL content."""
         return int(self.tree.entity().body().attr_bsr_len()[0].bsr_len().getText())
 
+    def build_pin_map_content(self):
+        """Builds the pin map content from the BSDL tree."""
+
+        self.pin_map = {}
+
+        pin_map_len = len(self.tree.entity().body().pin_map()[0].pin_def())
+        # print(f'Pin map length: {pin_map_len}')
+
+        # print(self.tree.entity().body().pin_map()[0].pin_def())
+
+        for i in range(pin_map_len):
+            port = self.tree.entity().body().pin_map()[0].pin_def()[i].pin_desc().getText()
+
+            if self.tree.entity().body().pin_map()[0].pin_def()[i].pin_num() is not None:
+                pin_num = self.tree.entity().body().pin_map()[0].pin_def()[i].pin_num().getText()
+                # print(f'name={pin_name}, num={pin_num}')
+                self.pin_map[pin_num] = port
+            else:
+                pin_num_arr_len = len(self.tree.entity().body().pin_map()[0].pin_def()[i].pin_num_arr().pin_num())
+                for j in range(pin_num_arr_len):
+                    pin_num = self.tree.entity().body().pin_map()[0].pin_def()[i].pin_num_arr().pin_num()[j].getText()
+                    # print(f'name={port}, num={pin_num}')
+                    self.pin_map[pin_num] = port
+
+
+    def get_pin_map(self):
+        """Returns the pin map content."""
+        return self.pin_map
+
     def build_bsr_content(self):
         """Builds the BSR content from the BSDL tree."""
 
@@ -91,6 +121,7 @@ class CBBsdl():
                 cell_func = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_func().getText()
                 cell_val = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_val().getText()
                 ctrl_cell = 0
+                disval = 0
 
             elif self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1() is not None:
                 cell_type = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_type().getText()
@@ -102,6 +133,7 @@ class CBBsdl():
                 cell_func = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_func().getText()
                 cell_val = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_val().getText()
                 ctrl_cell = int(self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().ctrl_cell().getText())
+                disval = int(self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().disval().getText())
 
             else:
                 data_cell = 0
@@ -110,6 +142,7 @@ class CBBsdl():
                 cell_func = 'undef'
                 cell_val = 'undef'
                 ctrl_cell = 0
+                disval = 0
 
 
             bsr_cell = {
@@ -118,7 +151,8 @@ class CBBsdl():
                 'cell_desc': cell_desc,
                 'cell_func': cell_func,
                 'cell_val': cell_val,
-                'ctrl_cell': ctrl_cell
+                'ctrl_cell': ctrl_cell,
+                'disval': disval
             }
 
 
@@ -251,5 +285,12 @@ class CBBsdl():
         """Returns the control cell for a given cell description."""
         if cell_desc in self.bsr:
             return self.bsr[cell_desc]['ctrl_cell']
+        else:
+            raise ValueError(f"Cell description {cell_desc} not found in BSR content.")
+
+    def get_bsr_disval(self, cell_desc):
+        """Returns the disable value for a given cell description."""
+        if cell_desc in self.bsr:
+            return self.bsr[cell_desc]['disval']
         else:
             raise ValueError(f"Cell description {cell_desc} not found in BSR content.")
