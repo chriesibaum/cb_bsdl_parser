@@ -150,12 +150,12 @@ pin_map
 
 pin_def
     :
-    QUOTES
+    QUOTES?
     pin_desc
     COLON
     (pin_num | pin_num_arr)
     COMMA?
-    QUOTES
+    QUOTES?
     AMPERSAND?
     ;
 
