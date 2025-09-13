@@ -83,7 +83,7 @@ class CBBsdl():
         # print(self.tree.entity().body().pin_map()[0].pin_def())
 
         for i in range(pin_map_len):
-            port = self.tree.entity().body().pin_map()[0].pin_def()[i].pin_desc().getText()
+            port = self.tree.entity().body().pin_map()[0].pin_def()[i].port().getText()
 
             if self.tree.entity().body().pin_map()[0].pin_def()[i].pin_num() is not None:
                 pin_num = self.tree.entity().body().pin_map()[0].pin_def()[i].pin_num().getText()
@@ -183,11 +183,6 @@ class CBBsdl():
     def compile_bsr_ctrl_cells(self):
         """Compiles control cells from the BSR content."""
 
-        # print('')
-        # print('BSR content:')
-        # for pin_desc, cell in self.bsr.items():
-        #     print(f'  {pin_desc}: {cell}')
-
         for i in range(len(self.bsr)):
             cell_desc = list(self.bsr.keys())[i]
             cell = self.bsr[cell_desc]
@@ -246,51 +241,51 @@ class CBBsdl():
                       f'ctrl_cell: {self.bsr[bsr_cell]['ctrl_cell']:3d}')
 
 
-    def get_bsr_data_cell(self, cell_desc):
-        """Returns the cell number for a given cell description."""
-        if cell_desc in self.bsr:
-            return self.bsr[cell_desc]['data_cell']
+    def get_bsr_data_cell(self, bsr_cell):
+        """Returns the cell number for a given BSR cell."""
+        if bsr_cell in self.bsr:
+            return self.bsr[bsr_cell]['data_cell']
         else:
-            raise ValueError(f"Cell description {cell_desc} not found in BSR content.")
+            raise ValueError(f"BSR cell {bsr_cell} not found in BSR content.")
 
-    def get_bsr_cell_type(self, cell_desc):
-        """Returns the cell type for a given cell description."""
-        if cell_desc in self.bsr:
-            return self.bsr[cell_desc]['cell_type']
+    def get_bsr_cell_type(self, bsr_cell):
+        """Returns the cell type for a given BSR cell."""
+        if bsr_cell in self.bsr:
+            return self.bsr[bsr_cell]['cell_type']
         else:
-            raise ValueError(f"Cell description {cell_desc} not found in BSR content.")
+            raise ValueError(f"BSR cell {bsr_cell} not found in BSR content.")
 
-    def get_bsr_cell_desc(self, cell_desc):
-        """Returns the cell description for a given cell description."""
-        if cell_desc in self.bsr:
-            return self.bsr[cell_desc]['cell_desc']
+    def get_bsr_cell_desc(self, bsr_cell):
+        """Returns the cell description for a given BSR cell."""
+        if bsr_cell in self.bsr:
+            return self.bsr[bsr_cell]['cell_desc']
         else:
-            raise ValueError(f"Cell description {cell_desc} not found in BSR content.")
+            raise ValueError(f"BSR cell {bsr_cell} not found in BSR content.")
 
-    def get_bsr_cell_func(self, cell_desc):
-        """Returns the cell function for a given cell description."""
-        if cell_desc in self.bsr:
-            return self.bsr[cell_desc]['cell_func']
+    def get_bsr_cell_func(self, bsr_cell):
+        """Returns the cell function for a given BSR cell."""
+        if bsr_cell in self.bsr:
+            return self.bsr[bsr_cell]['cell_func']
         else:
-            raise ValueError(f"Cell description {cell_desc} not found in BSR content.")
+            raise ValueError(f"BSR cell {bsr_cell} not found in BSR content.")
 
-    def get_bsr_cell_val(self, cell_desc):
-        """Returns the cell value for a given cell description."""
-        if cell_desc in self.bsr:
-            return self.bsr[cell_desc]['cell_val']
+    def get_bsr_cell_val(self, bsr_cell):
+        """Returns the cell value for a given BSR cell."""
+        if bsr_cell in self.bsr:
+            return self.bsr[bsr_cell]['cell_val']
         else:
-            raise ValueError(f"Cell description {cell_desc} not found in BSR content.")
+            raise ValueError(f"BSR cell {bsr_cell} not found in BSR content.")
 
-    def get_bsr_ctrl_cell(self, cell_desc):
-        """Returns the control cell for a given cell description."""
-        if cell_desc in self.bsr:
-            return self.bsr[cell_desc]['ctrl_cell']
+    def get_bsr_ctrl_cell(self, bsr_cell):
+        """Returns the control cell for a given BSR cell."""
+        if bsr_cell in self.bsr:
+            return self.bsr[bsr_cell]['ctrl_cell']
         else:
-            raise ValueError(f"Cell description {cell_desc} not found in BSR content.")
+            raise ValueError(f"BSR cell {bsr_cell} not found in BSR content.")
 
-    def get_bsr_disval(self, cell_desc):
-        """Returns the disable value for a given cell description."""
-        if cell_desc in self.bsr:
-            return self.bsr[cell_desc]['disval']
+    def get_bsr_disval(self, bsr_cell):
+        """Returns the disable value for a given BSR cell."""
+        if bsr_cell in self.bsr:
+            return self.bsr[bsr_cell]['disval']
         else:
-            raise ValueError(f"Cell description {cell_desc} not found in BSR content.")
+            raise ValueError(f"BSR cell {bsr_cell} not found in BSR content.")

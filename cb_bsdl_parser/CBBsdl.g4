@@ -151,7 +151,7 @@ pin_map
 pin_def
     :
     QUOTES?
-    pin_desc
+    port
     COLON
     (pin_num | pin_num_arr)
     COMMA?
@@ -159,7 +159,7 @@ pin_def
     AMPERSAND?
     ;
 
-pin_desc
+port
     :
     identifier
     ;
