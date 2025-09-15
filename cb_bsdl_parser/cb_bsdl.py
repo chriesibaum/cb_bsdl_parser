@@ -28,6 +28,7 @@ class CBBsdl():
             if self.check_bsr_length() != True:
                 raise ValueError("BSR length is not present or inconsistent in the BSDL content.")
 
+        self.build_ports_content()
         self.build_pin_map_content()
         self.build_bsr_content()
         self.compile_bsr_ctrl_cells()
@@ -72,29 +73,67 @@ class CBBsdl():
         """Extracts the BSR length from the BSDL content."""
         return int(self.tree.entity().body().attr_bsr_len()[0].bsr_len().getText())
 
+    def ports_add(self, port_name_str, port_function, port_type):
+        # print(f'Port Name: {port_name_str}, ', end='')
+        # print(f'Port Function: {port_function}, ', end='')
+        # print(f'Port Type: {port_type}')
+
+        self.ports[port_name_str] = {
+            'function': port_function,
+            'type': port_type
+        }
+
+
+    def build_ports_content(self):
+        """Builds the port declaration content from the BSDL tree."""
+
+        self.ports = {}
+
+        for port_def in self.tree.entity().body().port_dec()[0].port_def():
+            for port_name in port_def.port_name():
+                if port_def.port_type().getText() == 'bit':
+                    port_name_str = port_name.getText()
+                    port_function = port_def.port_function().getText()
+                    port_type = port_def.port_type().getText()
+
+                    self.ports_add(port_name_str, port_function, port_type)
+
+                elif 'bit_vector' in port_def.port_type().getText():
+                    bit_0 = int(port_def.port_type().bit_vector().bit_range().INTEGER()[0].getText())
+                    bit_1 = int(port_def.port_type().bit_vector().bit_range().INTEGER()[1].getText())
+                    for bit in range(bit_0, bit_1 + 1):
+                        port_name_str = f'{port_name.getText()}.{bit}'
+                        port_function = port_def.port_function().getText()
+                        port_type = 'bit'
+
+                        self.ports_add(port_name_str, port_function, port_type)
+
+                else:
+                    print(f'ERROR: Port Type {port_def.port_type().getText()} not supported yet')
+                    raise NotImplementedError
+
+    def get_ports(self):
+        """Returns the port declaration content."""
+        return self.ports
+
     def build_pin_map_content(self):
         """Builds the pin map content from the BSDL tree."""
 
         self.pin_map = {}
 
         pin_map_len = len(self.tree.entity().body().pin_map()[0].pin_def())
-        # print(f'Pin map length: {pin_map_len}')
-
-        # print(self.tree.entity().body().pin_map()[0].pin_def())
 
         for i in range(pin_map_len):
-            port = self.tree.entity().body().pin_map()[0].pin_def()[i].port().getText()
+            port_name = self.tree.entity().body().pin_map()[0].pin_def()[i].port_name().getText()
 
             if self.tree.entity().body().pin_map()[0].pin_def()[i].pin_num() is not None:
                 pin_num = self.tree.entity().body().pin_map()[0].pin_def()[i].pin_num().getText()
-                # print(f'name={pin_name}, num={pin_num}')
-                self.pin_map[pin_num] = port
+                self.pin_map[pin_num] = port_name
             else:
                 pin_num_arr_len = len(self.tree.entity().body().pin_map()[0].pin_def()[i].pin_num_arr().pin_num())
                 for j in range(pin_num_arr_len):
                     pin_num = self.tree.entity().body().pin_map()[0].pin_def()[i].pin_num_arr().pin_num()[j].getText()
-                    # print(f'name={port}, num={pin_num}')
-                    self.pin_map[pin_num] = port
+                    self.pin_map[pin_num] = f'{port_name}.{j}'
 
 
     def get_pin_map(self):

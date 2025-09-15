@@ -98,7 +98,7 @@ port_dec
 
 port_def
     :
-    port_name
+    (port_name COMMA?)+
     COLON
     port_function
     port_type
@@ -151,17 +151,12 @@ pin_map
 pin_def
     :
     QUOTES?
-    port
+    port_name
     COLON
     (pin_num | pin_num_arr)
     COMMA?
     QUOTES?
     AMPERSAND?
-    ;
-
-port
-    :
-    identifier
     ;
 
 pin_num
