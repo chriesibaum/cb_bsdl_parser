@@ -55,7 +55,7 @@ class CBBsdl():
         attr_bsr_len1 = len(self.tree.entity().body().attr_bsr()[0].bsr_def())
 
         if self.verbose:
-            print(f'attr_bsr_len0: {attr_bsr_len0}, attr_bsr_len1: {attr_bsr_len1}')
+            log.debug(f'attr_bsr_len0: {attr_bsr_len0}, attr_bsr_len1: {attr_bsr_len1}')
 
         if attr_bsr_len0 != attr_bsr_len1:
             raise ValueError("BSR length not consistent.")
@@ -76,15 +76,10 @@ class CBBsdl():
         return int(self.tree.entity().body().attr_bsr_len()[0].bsr_len().getText())
 
     def ports_add(self, port_name_str, port_function, port_type):
-        # print(f'Port Name: {port_name_str}, ', end='')
-        # print(f'Port Function: {port_function}, ', end='')
-        # print(f'Port Type: {port_type}')
-
         self.ports[port_name_str] = {
             'function': port_function,
             'type': port_type
         }
-
 
     def build_ports_content(self):
         """Builds the port declaration content from the BSDL tree."""
@@ -111,7 +106,7 @@ class CBBsdl():
                         self.ports_add(port_name_str, port_function, port_type)
 
                 else:
-                    print(f'ERROR: Port Type {port_def.port_type().getText()} not supported yet')
+                    log.error(f'Port Type {port_def.port_type().getText()} not supported yet')
                     raise NotImplementedError
 
     def get_ports(self):
@@ -232,13 +227,13 @@ class CBBsdl():
 
             if cell_desc.endswith('_out'):
                 if self.verbose:
-                    print(f'Control cell found: {cell_desc}, data_cell: {cell['data_cell']} ctrl_cell: {cell['ctrl_cell']}   ', end='')
+                    log.debug(f'Control cell found: {cell_desc}, data_cell: {cell['data_cell']} ctrl_cell: {cell['ctrl_cell']}   ', end='')
 
                 for key, ccell in self.bsr.items():
                     if ccell['ctrl_cell'] != '' and int(ccell['ctrl_cell']) == int(cell['ctrl_cell']):
                         ctrl_cell_used += 1
                         if self.verbose:
-                            print(f'  {key} has ctrl_cell {ccell['ctrl_cell']}')
+                            log.debug(f'  {key} has ctrl_cell {ccell['ctrl_cell']}')
 
                 if ctrl_cell_used == 1:
                     new_key_ctrl_cell = f'{cell['cell_desc']}_ctrl'
@@ -247,12 +242,12 @@ class CBBsdl():
 
 
                     if self.verbose:
-                        print(f'modify key: {old_key_ctrl_cell} -> {new_key_ctrl_cell}  ')
+                        log.debug(f'modify key: {old_key_ctrl_cell} -> {new_key_ctrl_cell}  ')
 
                     if int(cell['data_cell']) != int(cell['ctrl_cell']):
                         self.bsr[new_key_ctrl_cell] = self.bsr.pop(old_key_ctrl_cell)
                     else:
-                        print(f'Warning: {cell['cell_desc']} does not have a separate ctrl_cell')
+                        log.warning(f'Warning: {cell['cell_desc']} does not have a separate ctrl_cell')
 
 
         # Sort the BSR content by data_cell
@@ -265,21 +260,21 @@ class CBBsdl():
 
     def print_bsr_table(self):
         """Prints the BSDL BSR content information."""
-        print(f'BSDL file: {self.bsdl_file}')
-        print(f'Entity name: {self.get_entity_name()}')
-        print(f'Physical pin map: {self.get_physical_pin_map()}')
-        print(f'BSR length: {self.get_bsr_len()}')
-        print('BSR content:')
+        log.info(f'BSDL file: {self.bsdl_file}')
+        log.info(f'Entity name: {self.get_entity_name()}')
+        log.info(f'Physical pin map: {self.get_physical_pin_map()}')
+        log.info(f'BSR length: {self.get_bsr_len()}')
+        log.info('BSR content:')
         for bsr_cell in self.bsr.keys():
 
             if self.bsr[bsr_cell]['cell_func'] != 'internal':
-                print(f'  {bsr_cell:10s} '\
-                      f'{self.bsr[bsr_cell]['data_cell']:3d}   '\
-                      f'type: {self.bsr[bsr_cell]['cell_type']:4s}   '\
-                      f'desc: {self.bsr[bsr_cell]['cell_desc']:6s}   '\
-                      f'func: {self.bsr[bsr_cell]['cell_func']:9s}   '\
-                      f'val: {self.bsr[bsr_cell]['cell_val']:1s}   '\
-                      f'ctrl_cell: {self.bsr[bsr_cell]['ctrl_cell']:3d}')
+                log.info(f'  {bsr_cell:10s} '\
+                         f'{self.bsr[bsr_cell]['data_cell']:3d}   '\
+                         f'type: {self.bsr[bsr_cell]['cell_type']:4s}   '\
+                         f'desc: {self.bsr[bsr_cell]['cell_desc']:6s}   '\
+                         f'func: {self.bsr[bsr_cell]['cell_func']:9s}   '\
+                         f'val: {self.bsr[bsr_cell]['cell_val']:1s}   '\
+                         f'ctrl_cell: {self.bsr[bsr_cell]['ctrl_cell']:3d}')
 
 
     def get_bsr_data_cell(self, bsr_cell):
