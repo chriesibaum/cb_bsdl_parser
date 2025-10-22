@@ -47,9 +47,9 @@ deploy: build
 	twine upload dist/*
 
 clean:
-	make -C ./cb_bsdl_parser/ clean
 	@rm -rf __pycache__
 	@rm -rf */__pycache__
+	@rm -rf ./$(BUILD_DIR)
 
 mr_proper: clean
-	@rm -rf ./$(BUILD_DIR)
+	make -C ./cb_bsdl_parser/ clean
