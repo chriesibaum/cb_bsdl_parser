@@ -44,7 +44,7 @@ packages = ["cb_bsdl_parser/",
 
 
 [project.urls]
-"Homepage" = "https://github.com/chriesibaum/cb-pyutils"
+"Homepage" = "https://github.com/chriesibaum/cb_bsdl_parser"
 
 
 [project.scripts]
