@@ -3,6 +3,8 @@ from antlr4 import *
 from cb_bsdl_parser.CBBsdlLexer import CBBsdlLexer
 from cb_bsdl_parser.CBBsdlParser import CBBsdlParser
 
+import logging
+log = logging.getLogger(__name__)
 
 class CBBsdl():
     def __init__(self, bsdl_file, check_bsr=True, verbose=False):
@@ -208,7 +210,7 @@ class CBBsdl():
                 key_a = ''
             else:
                 key_a = ''
-                print(f'Warning: cell_func {cell_func} not recognized for cell_desc {cell_desc}')
+                log.warn(f'Cell_func {cell_func} not recognized for cell_desc {cell_desc}')
 
             if key_a != '':
                 key = f'{cell_desc}_{key_a}'
