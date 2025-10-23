@@ -40,7 +40,7 @@ Repository = "https://github.com/chriesibaum/cb_bsdl_parser"
 
 
 [tool.hatch.version]
-path = "./__version__.py"
+path = "./cb_bsdl_parser/__version__.py"
 
 
 [tool.hatch.metadata.hooks.requirements_txt]
