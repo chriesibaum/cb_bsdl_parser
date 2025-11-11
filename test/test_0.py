@@ -21,7 +21,7 @@ def get_test_params():
         yield params[param]
 
 
-class Test_BsdlParser:
+class Test_0_BsdlParser:
     @pytest.fixture(autouse=True, params=get_test_params())
     @classmethod
     def setup_class(self, request):
@@ -42,6 +42,10 @@ class Test_BsdlParser:
         self.expected_bsr_cell_val = request.param.get('bsr_cell_val', '')
         self.expected_bsr_ctrl_cell = request.param.get('bsr_ctrl_cell', 0)
         self.expected_bsr_disval = request.param.get('bsr_disval', 0)
+
+        self.load_bsdl(self)
+
+    def load_bsdl(self):
 
         self.bdsl = CBBsdl(self.bsdl_file,
                            run_checks=self.run_checks)
@@ -107,3 +111,15 @@ class Test_BsdlParser:
         if self.expected_bsr_ctrl_cell is not None:
             assert bsr_ctrl_cell == self.expected_bsr_ctrl_cell
             assert bsr_disval == self.expected_bsr_disval
+
+
+class Test_1_BSDLParserBlob(Test_0_BsdlParser):
+
+    def load_bsdl(self):
+
+        # Load BSDL file content as blob
+        with open(self.bsdl_file, 'r') as file:
+            bsdl_blob = file.read()
+
+        self.bdsl = CBBsdl(bsdl_blob,
+                           run_checks=self.run_checks)

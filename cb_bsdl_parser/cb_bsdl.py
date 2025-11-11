@@ -1,4 +1,5 @@
 
+import os
 from antlr4.InputStream import InputStream
 from antlr4.CommonTokenStream import CommonTokenStream
 from collections import OrderedDict
@@ -15,17 +16,23 @@ class SkipError(Exception):
 
 
 class CBBsdl():
-    def __init__(self, bsdl_file, run_checks=True,
+    def __init__(self, bsdl_file=None, run_checks=True,
                  verbose=False):
 
-        self.bsdl_file = bsdl_file
+        self.bsdl_file = None
         self.run_checks = run_checks
         self.verbose = verbose
 
-        with open(self.bsdl_file, 'r') as file:
-            input_text = file.read()
+        # check if bsdl_file is a file or a file_blob
+        if os.path.isfile(bsdl_file):
+            self.bsdl_file = bsdl_file
 
-        lexer = CBBsdlLexer(InputStream(input_text))
+            with open(self.bsdl_file, 'r') as file:
+                self.bsdl_blob = file.read()
+        else:
+            self.bsdl_blob = bsdl_file
+
+        lexer = CBBsdlLexer(InputStream(self.bsdl_blob))
         stream = CommonTokenStream(lexer)
         parser = CBBsdlParser(stream)
 
