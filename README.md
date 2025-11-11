@@ -3,6 +3,8 @@ Chriesibaum's BSDL File Parser
 
 [![pypi](https://img.shields.io/pypi/v/cb_bsdl_parser.svg)](https://pypi.org/project/cb_bsdl_parser/)
 [![python](https://img.shields.io/pypi/pyversions/cb_bsdl_parser.svg)](https://pypi.org/project/cb_bsdl_parser/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/cb_bsdl_parser)](https://pypi.org/project/cb_bsdl_parser/)
+[![GitHub stars](https://img.shields.io/github/stars/chriesibaum/cb_bsdl_parser.svg)](https://github.com/smarie/python-genbadge/stargazers)
 <br>
 [![Tests Status](https://raw.githubusercontent.com/chriesibaum/cb_bsdl_parser/refs/heads/main/doc/tests-badge.svg)]()
 [![Coverage Status](https://raw.githubusercontent.com/chriesibaum/cb_bsdl_parser/refs/heads/main/doc/coverage-badge.svg)]()
