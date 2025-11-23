@@ -78,3 +78,20 @@ test4:
   bsr_cell_val: "X"
   bsr_ctrl_cell: 17
   bsr_disval: 1
+
+
+test5:
+  name: "Test5 10CL025U256"
+  file_name: "./test/bsdl_files/10CL025U256.bsd"
+  entity_name: "CYCLONE_10_LP_10CL025U256"
+  physical_pin_map: "FBGA256"
+  bsr_len: "732"
+  run_checks: false
+  bsr_cell: "IOT10_in"
+  bsr_data_cell: 450
+  bsr_cell_desc: "IOT10"
+  bsr_cell_type: "BC_1"
+  bsr_cell_func: "input"
+  bsr_cell_val: "X"
+  bsr_ctrl_cell:
+  bsr_disval:

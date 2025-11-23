@@ -152,6 +152,15 @@ class CBBsdlListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by CBBsdlParser#pin_map_constant.
+    def enterPin_map_constant(self, ctx:CBBsdlParser.Pin_map_constantContext):
+        pass
+
+    # Exit a parse tree produced by CBBsdlParser#pin_map_constant.
+    def exitPin_map_constant(self, ctx:CBBsdlParser.Pin_map_constantContext):
+        pass
+
+
     # Enter a parse tree produced by CBBsdlParser#pin_def.
     def enterPin_def(self, ctx:CBBsdlParser.Pin_defContext):
         pass

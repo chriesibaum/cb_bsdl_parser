@@ -34,6 +34,7 @@ body
         generic_phys_pin_map
       | port_dec
       | pin_map
+      | pin_map_constant
       | attr_bsr_len
       | attr_bsr
       | undef_part
@@ -140,6 +141,18 @@ pin_map
     PIN_MAP_STRING
     EQUALS
     (pin_def)+
+    SEMICOLON
+    ;
+
+// Altera/Intel style constant pin map with quoted strings
+pin_map_constant
+    :
+    CONSTANT
+    phys_pin_map_name
+    COLON
+    PIN_MAP_STRING
+    EQUALS
+    (QUOTES | AMPERSAND | port_name | COLON | pin_num | pin_num_arr | COMMA)+
     SEMICOLON
     ;
 

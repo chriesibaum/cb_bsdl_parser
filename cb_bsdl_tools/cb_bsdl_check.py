@@ -105,8 +105,8 @@ def process_file(bsdl_file, log):
     log.info('---------------------------------------------'
              '---------------------------------------------')
     log.info(f'Processing file: {bsdl_file}')
+    bsdl = CBBsdl(bsdl_file, run_checks=False)
     try:
-        bsdl = CBBsdl(bsdl_file, run_checks=False)
         error_count = check(bsdl, log)
     except Exception as e:
         log.critical(f'  Error processing {bsdl_file}: {e}')

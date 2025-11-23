@@ -192,6 +192,7 @@ class CBBsdl():
            'UFBGA' in physical_pin_map or \
            'LBGA' in physical_pin_map or \
            'TFBGA' in physical_pin_map or \
+           'FBGA' in physical_pin_map or \
            'NONE' in physical_pin_map:
             raise SkipError(f'Physical pin map {physical_pin_map} skipped')
 
@@ -310,11 +311,147 @@ class CBBsdl():
         """Returns the port declaration content."""
         return self.ports
 
+    def _parse_pin_map_from_constant(self):
+        """Parse PIN_MAP_STRING constant from undef_part (Altera/Intel format).
+
+        NOTE: The grammar has been updated with a pin_map_constant rule, but until
+        the ANTLR parser is regenerated with a compatible version, we parse it from
+        undef_part where it currently gets captured.
+
+        In Altera BSDL files, the pin map is defined as:
+        constant <name> : PIN_MAP_STRING := "<port>:<pin>, ..." ;
+        """
+        # Try to use pin_map_constant if it exists (future-proof for when parser is regenerated)
+        if hasattr(self.tree.entity().body(), 'pin_map_constant'):
+            pin_map_constants = self.tree.entity().body().pin_map_constant()
+            if pin_map_constants and len(pin_map_constants) > 0:
+                source = pin_map_constants[0]
+                log.debug(f"Using pin_map_constant rule with {source.getChildCount()} children")
+            else:
+                source = None
+        else:
+            source = None
+
+        # Fallback: parse from undef_part
+        if source is None:
+            undef_parts = self.tree.entity().body().undef_part()
+            if not undef_parts:
+                return
+
+            # Find the undef_part containing PIN_MAP_STRING
+            for undef in undef_parts:
+                text = undef.getText()
+                if 'PIN_MAP_STRING' in text:
+                    source = undef
+                    log.debug(f"Using undef_part with PIN_MAP_STRING, {source.getChildCount()} children")
+                    break
+
+            if source is None:
+                log.debug("No PIN_MAP_STRING constant found")
+                return
+
+        # Parse the token stream
+        skip_tokens = {'"', '&', 'constant', 'CONSTANT', ';', ':=', 'PIN_MAP_STRING'}
+
+        child_count = source.getChildCount()
+        i = 0
+        inside_data = False
+
+        # Skip until we find := which marks the start of actual pin mappings
+        while i < child_count:
+            child = source.getChild(i)
+            if hasattr(child, 'getText') and child.getText() == ':=':
+                inside_data = True
+                i += 1
+                break
+            i += 1
+
+        if not inside_data:
+            log.warning("Could not find := in PIN_MAP_STRING constant")
+            return
+
+        while i < child_count:
+            child = source.getChild(i)
+            if not hasattr(child, 'getText'):
+                i += 1
+                continue
+
+            token_text = child.getText()
+
+            # Skip structural tokens
+            if token_text in skip_tokens or token_text.isspace():
+                i += 1
+                continue
+
+            # Look for port_name : pin_num , pattern
+            if i + 3 < child_count:
+                next1 = source.getChild(i + 1).getText() if hasattr(source.getChild(i + 1), 'getText') else ''
+                next2 = source.getChild(i + 2).getText() if hasattr(source.getChild(i + 2), 'getText') else ''
+                next3 = source.getChild(i + 3).getText() if hasattr(source.getChild(i + 3), 'getText') else ''
+
+                # Check for simple mapping: PORT : PIN ,
+                if next1 == ':' and next3 == ',' and next2 not in skip_tokens:
+                    port_name = token_text
+                    pin_num = next2
+
+                    # Validate that this looks like a valid port and pin
+                    if (len(port_name) > 0 and port_name[0].isalpha() and
+                        len(pin_num) > 0 and port_name not in skip_tokens):
+                        self.pin_map[pin_num] = port_name
+                        self.pin_numbers.append(pin_num)
+
+                    i += 4  # Skip past this mapping
+                    continue
+
+                # Check for array mapping: PORT : ( ... )
+                if next1 == ':' and next2 == '(':
+                    port_name = token_text
+                    if port_name in skip_tokens or not port_name[0].isalpha():
+                        i += 1
+                        continue
+
+                    # Find matching closing parenthesis and extract pins
+                    j = i + 3
+                    pins = []
+                    while j < child_count:
+                        token = source.getChild(j).getText() if hasattr(source.getChild(j), 'getText') else ''
+                        if token == ')':
+                            break
+                        elif token and token not in [',', ' ', '\t', '\n', '&', '"'] and len(token) > 0:
+                            pins.append(token)
+                        j += 1
+
+                    # Add each pin with indexed port name
+                    for idx, pin in enumerate(pins, start=1):
+                        self.pin_map[pin] = f'{port_name}.{idx}'
+                        self.pin_numbers.append(pin)
+
+                    i = j + 1  # Skip past the closing parenthesis
+                    continue
+
+            i += 1
+
+        log.info(f"Parsed {len(self.pin_map)} pin mappings from PIN_MAP_STRING constant")
+
     def build_pin_map_content(self):
         """Builds the pin map content from the BSDL tree."""
 
         self.pin_map = {}
         self.pin_numbers = []
+
+        # Check if pin_map attribute exists and has pin definitions
+        if not self.tree.entity().body().pin_map() or len(self.tree.entity().body().pin_map()) == 0:
+            # No pin_map attribute - try parsing constant format (Altera/Intel)
+            log.debug("No pin_map attribute found, checking for PIN_MAP_STRING constant")
+            self._parse_pin_map_from_constant()
+            return
+
+        # Check if pin_def exists
+        if not self.tree.entity().body().pin_map()[0].pin_def():
+            # No inline pin_def - try constant format
+            log.debug("pin_map attribute found but no inline pin_def, checking for constant format")
+            self._parse_pin_map_from_constant()
+            return
 
         pin_map_len = len(self.tree.entity().body().pin_map()[0].pin_def())
 
