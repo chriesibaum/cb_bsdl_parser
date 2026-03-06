@@ -62,6 +62,24 @@ class CBBsdlListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by CBBsdlParser#attr_instr_len.
+    def enterAttr_instr_len(self, ctx:CBBsdlParser.Attr_instr_lenContext):
+        pass
+
+    # Exit a parse tree produced by CBBsdlParser#attr_instr_len.
+    def exitAttr_instr_len(self, ctx:CBBsdlParser.Attr_instr_lenContext):
+        pass
+
+
+    # Enter a parse tree produced by CBBsdlParser#instr_len.
+    def enterInstr_len(self, ctx:CBBsdlParser.Instr_lenContext):
+        pass
+
+    # Exit a parse tree produced by CBBsdlParser#instr_len.
+    def exitInstr_len(self, ctx:CBBsdlParser.Instr_lenContext):
+        pass
+
+
     # Enter a parse tree produced by CBBsdlParser#attr_bsr_len.
     def enterAttr_bsr_len(self, ctx:CBBsdlParser.Attr_bsr_lenContext):
         pass
@@ -149,15 +167,6 @@ class CBBsdlListener(ParseTreeListener):
 
     # Exit a parse tree produced by CBBsdlParser#pin_map.
     def exitPin_map(self, ctx:CBBsdlParser.Pin_mapContext):
-        pass
-
-
-    # Enter a parse tree produced by CBBsdlParser#pin_map_constant.
-    def enterPin_map_constant(self, ctx:CBBsdlParser.Pin_map_constantContext):
-        pass
-
-    # Exit a parse tree produced by CBBsdlParser#pin_map_constant.
-    def exitPin_map_constant(self, ctx:CBBsdlParser.Pin_map_constantContext):
         pass
 
 

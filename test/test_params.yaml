@@ -3,6 +3,8 @@ test0:
   file_name: "./test/bsdl_files/lpc1857fet256_revA_20180227-v1.bsd"
   entity_name: "LPC1857FET256"
   physical_pin_map: "LBGA256"
+  id_code: "01110010100001001110000000101011"
+  instr_len: 5
   bsr_len: "545"
   run_checks: false
   bsr_cell: "PF_11_in"
@@ -19,6 +21,8 @@ test1:
   file_name: "./test/bsdl_files/STM32G431_441_LQFP64.bsd"
   entity_name: "STM32G431_441_LQFP64"
   physical_pin_map: "LQFP64_PACKAGE"
+  id_code: "XXXX0110010001101000000001000001"
+  instr_len: 5
   bsr_len: "240"
   bsr_cell: "PC13_out"
   bsr_data_cell: 223
@@ -35,6 +39,8 @@ test2:
   file_name: "./test/bsdl_files/STM32G471_473_474_483_484_LQFP64.bsdl"
   entity_name: "STM32G471_473_474_483_484_LQFP64"
   physical_pin_map: "LQFP64_PACKAGE"
+  id_code: "XXXX0110010001101001000001000001"
+  instr_len: 5
   bsr_len: "303"
   bsr_cell: "PC13_in"
   bsr_data_cell: 285
@@ -50,6 +56,8 @@ test3:
   file_name: "./test/bsdl_files/STM32U575_U585_LQFP64.bsd"
   entity_name: "STM32U575_U585_LQFP64"
   physical_pin_map: "LQFP64_PACKAGE"
+  id_code: "XXXX0110010010000010000001000001"
+  instr_len: 5
   bsr_len: "393"
   bsr_cell: "PC13_out"
   bsr_data_cell: 376
@@ -65,6 +73,8 @@ test4:
   file_name: "./test/bsdl_files/sctm002.bsm"
   entity_name: "sn74bct8244a"
   physical_pin_map: "UNDEFINED"
+  no_id_code: true
+  instr_len: 8
   bsr_len: "18"
   # This BSDL file "attribute BOUNDARY_LENGTH" (18)  does not match the length
   # of the "attribute BOUNDARY_REGISTER" (20). This is a known issue with this BSDL file,
@@ -85,6 +95,8 @@ test5:
   file_name: "./test/bsdl_files/10CL025U256.bsd"
   entity_name: "CYCLONE_10_LP_10CL025U256"
   physical_pin_map: "FBGA256"
+  id_code: "00000010000011110011000011011101"
+  instr_len: 10
   bsr_len: "732"
   run_checks: false
   bsr_cell: "IOT10_in"

@@ -34,7 +34,7 @@ body
         generic_phys_pin_map
       | port_dec
       | pin_map
-      | pin_map_constant
+      | attr_instr_len
       | attr_bsr_len
       | attr_bsr
       | undef_part
@@ -63,6 +63,23 @@ phys_pin_map_name
     : identifier
     ;
 
+// attribute instruction length
+attr_instr_len
+    :
+    ATTRIBUTE
+    INSTR_LEN
+    OF
+    entity_name
+    COLON
+    ENTITY
+    IS
+    instr_len
+    SEMICOLON
+    ;
+
+instr_len
+    : number
+    ;
 
 // attribute boundary scan register length
 attr_bsr_len
@@ -140,19 +157,10 @@ pin_map
     COLON
     PIN_MAP_STRING
     EQUALS
-    (pin_def)+
-    SEMICOLON
-    ;
-
-// Altera/Intel style constant pin map with quoted strings
-pin_map_constant
-    :
-    CONSTANT
-    phys_pin_map_name
-    COLON
-    PIN_MAP_STRING
-    EQUALS
-    (QUOTES | AMPERSAND | port_name | COLON | pin_num | pin_num_arr | COMMA)+
+    (
+        (pin_def)+  // STM32 style: inline pin definitions
+      | (QUOTES | AMPERSAND | port_name | COLON | pin_num | pin_num_arr | COMMA)+  // Altera/Intel style: quoted strings
+    )
     SEMICOLON
     ;
 

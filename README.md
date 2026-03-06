@@ -65,6 +65,22 @@ To use ```antlr4```, install it from the deb package sources/store:
 sudo apt install antlr4
 ```
 
+Note: If a Python virtual environment installs `antlr4-tools`, its `antlr4` wrapper may fail offline with a `.m2/repository/org/antlr/antlr4` error.
+
+Current parser generation setup (no VSCode ANTLR required):
+- Preferred: venv-local jar at `/tmp/venv_cb_bsdl_parser/tools/antlr4-4.13.2-complete.jar`
+- Fallback: `/usr/bin/antlr4`
+- Last fallback: `antlr4` from `PATH`
+
+If needed, place a local ANTLR jar into the active venv:
+
+```bash
+source envsetup.sh
+mkdir -p "$VIRTUAL_ENV/tools"
+curl -fL -o "$VIRTUAL_ENV/tools/antlr4-4.13.2-complete.jar" \
+	https://repo1.maven.org/maven2/org/antlr/antlr4/4.13.2/antlr4-4.13.2-complete.jar
+```
+
 
 ## About Café - The source of coding! ;-)
 

@@ -49,12 +49,14 @@ files = ["requirements.txt"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["cb_bsdl_parser/",
-            "cb_bsdl_tools/"]
+            "cb_bsdl_tools/",
+            "cb_bsdl_db_tools/"]
 
 
 [project.scripts]
 cb_bsdl_info = "cb_bsdl_tools.cb_bsdl_info:main"
 cb_bsdl_check = "cb_bsdl_tools.cb_bsdl_check:main"
+cb_bsdl_id_code_db = "cb_bsdl_db_tools.id_code_db:main"
 
 
 [tool.coverage.report]

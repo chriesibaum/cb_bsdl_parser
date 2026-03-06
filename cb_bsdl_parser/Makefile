@@ -2,6 +2,7 @@
 
 # tools
 E := @echo
+ANTLR4 := $(shell if [ -n "$$VIRTUAL_ENV" ] && [ -x "$$VIRTUAL_ENV/bin/antlr4" ]; then echo "$$VIRTUAL_ENV/bin/antlr4"; elif [ -x /usr/bin/antlr4 ]; then echo /usr/bin/antlr4; else echo antlr4; fi)
 
 
 all: parser
@@ -21,7 +22,7 @@ parser: $(ANTLR4_FILES)
 
 $(ANTLR4_FILES): $(GRAMAR_FILES)
 	$(E) "Generating python code from ANTLR grammar files..."
-	@antlr4 -Dlanguage=Python3 $(GRAMAR_FILES)
+	@$(ANTLR4) -Dlanguage=Python3 $(GRAMAR_FILES)
 
 
 clean:

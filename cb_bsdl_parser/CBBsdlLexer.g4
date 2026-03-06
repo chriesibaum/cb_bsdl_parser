@@ -8,6 +8,7 @@ GENERIC          : 'generic' ;
 STRING           : 'string' ;
 PHYSICAL_PIN_MAP : 'PHYSICAL_PIN_MAP' ;
 ATTRIBUTE        : 'attribute' ;
+INSTR_LEN        : 'INSTRUCTION_LENGTH' ;
 BS_LEN           : 'BOUNDARY_LENGTH' ;
 BS_REG           : 'BOUNDARY_REGISTER' ;
 OF               : 'of' ;

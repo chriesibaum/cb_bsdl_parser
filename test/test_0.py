@@ -32,6 +32,7 @@ class Test_0_BsdlParser:
         self.expected_entity_name = request.param['entity_name']
         self.expected_physical_pin_map = request.param['physical_pin_map']
 
+        self.expected_instr_len = int(request.param.get('instr_len', 0))
         self.expected_bsr_len = int(request.param['bsr_len'])
         self.run_checks = request.param.get('run_checks', True)
         self.expected_bsr_cell = request.param.get('bsr_cell', '')
@@ -42,6 +43,8 @@ class Test_0_BsdlParser:
         self.expected_bsr_cell_val = request.param.get('bsr_cell_val', '')
         self.expected_bsr_ctrl_cell = request.param.get('bsr_ctrl_cell', 0)
         self.expected_bsr_disval = request.param.get('bsr_disval', 0)
+        self.expected_id_code = request.param.get('id_code', None)
+        self.no_id_code = request.param.get('no_id_code', False)
 
         self.load_bsdl(self)
 
@@ -80,11 +83,32 @@ class Test_0_BsdlParser:
         print(f'physical_pin_map: {physical_pin_map}')
         assert physical_pin_map == self.expected_physical_pin_map
 
+    def test_instr_length(self):
+        print("Testing instruction length extraction")
+        instr_len = self.bdsl.get_instr_len()
+        print(f'instr_length: {instr_len}')
+        assert instr_len == self.expected_instr_len, "Instruction length does not match expected value"
+
     def test_bsr_length(self):
         print("Testing BSR length extraction")
         bsr_len = self.bdsl.get_bsr_len()
         print(f'bsr_length: {bsr_len}')
         assert bsr_len == self.expected_bsr_len, "BSR length does not match expected value"
+
+    def test_id_code(self):
+        print("Testing IDCODE_REGISTER extraction")
+
+        if self.no_id_code:
+            with pytest.raises(ValueError, match='IDCODE_REGISTER not found in BSDL content'):
+                self.bdsl.get_id_code()
+            return
+
+        if self.expected_id_code is None:
+            raise ValueError('Missing test parameter: id_code must be set when no_id_code is false')
+
+        id_code = self.bdsl.get_id_code()
+        print(f'id_code: {id_code}')
+        assert id_code == self.expected_id_code
 
     def test_bsr(self):
         print("Testing BSR content extraction")
