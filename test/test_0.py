@@ -44,7 +44,10 @@ class Test_0_BsdlParser:
         self.expected_bsr_ctrl_cell = request.param.get('bsr_ctrl_cell', 0)
         self.expected_bsr_disval = request.param.get('bsr_disval', 0)
         self.expected_id_code = request.param.get('id_code', None)
-        self.no_id_code = request.param.get('no_id_code', False)
+        self.expected_no_id_code = request.param.get('no_id_code', False)
+        self.expected_id_code_version = int(request.param.get('id_code_version', '0x0'), 16)
+        self.expected_id_code_manufacturer_identity = int(request.param.get('id_code_manufacturer_identity', '0x0'), 16)  # noqa: E501
+        self.expected_id_code_part_number = int(request.param.get('id_code_part_number', '0x0'), 16)
 
         self.load_bsdl(self)
 
@@ -87,7 +90,8 @@ class Test_0_BsdlParser:
         print("Testing instruction length extraction")
         instr_len = self.bdsl.get_instr_len()
         print(f'instr_length: {instr_len}')
-        assert instr_len == self.expected_instr_len, "Instruction length does not match expected value"
+        assert instr_len == self.expected_instr_len, \
+            "Instruction length does not match expected value"
 
     def test_bsr_length(self):
         print("Testing BSR length extraction")
@@ -98,17 +102,54 @@ class Test_0_BsdlParser:
     def test_id_code(self):
         print("Testing IDCODE_REGISTER extraction")
 
-        if self.no_id_code:
+        if self.expected_no_id_code:
             with pytest.raises(ValueError, match='IDCODE_REGISTER not found in BSDL content'):
                 self.bdsl.get_id_code()
             return
 
         if self.expected_id_code is None:
-            raise ValueError('Missing test parameter: id_code must be set when no_id_code is false')
+            raise ValueError('Missing test parameter:'
+                             ' id_code must be set when expected_no_id_code is false')
 
         id_code = self.bdsl.get_id_code()
         print(f'id_code: {id_code}')
         assert id_code == self.expected_id_code
+
+    def test_id_code_version(self):
+        print("Testing IDCODE_VERSION extraction")
+
+        if self.expected_no_id_code:
+            return
+
+        id_code_version = self.bdsl.get_id_code_version()
+        print(f'id_code_version: {id_code_version}')
+
+        assert id_code_version == self.expected_id_code_version, \
+            "IDCODE_VERSION does not match expected value"
+
+    def test_id_code_part_number(self):
+        print("Testing IDCODE_PART_NUMBER extraction")
+
+        if self.expected_no_id_code:
+            return
+
+        id_code_part_number = self.bdsl.get_id_code_part_number()
+        print(f'id_code_part_number: {id_code_part_number:#06x}')
+
+        assert id_code_part_number == self.expected_id_code_part_number, \
+            "IDCODE_PART_NUMBER does not match expected value"
+
+    def test_id_code_manufacturer_identity(self):
+        print("Testing IDCODE_MANUFACTURER_IDENTITY extraction")
+
+        if self.expected_no_id_code:
+            return
+
+        id_code_manufacturer_identity = self.bdsl.get_id_code_manufacturer_identity()
+        print(f'id_code_manufacturer_identity: {id_code_manufacturer_identity:#05x}')
+
+        assert id_code_manufacturer_identity == self.expected_id_code_manufacturer_identity, \
+            "IDCODE_MANUFACTURER_IDENTITY does not match expected value"
 
     def test_bsr(self):
         print("Testing BSR content extraction")

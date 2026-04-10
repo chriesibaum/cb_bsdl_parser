@@ -300,6 +300,55 @@ class CBBsdl():
 
         raise ValueError('IDCODE_REGISTER not found in BSDL content')
 
+    def get_id_code_version(self):
+        """Extracts the ID code version from the BSDL content."""
+        id_code = self.get_id_code()
+
+        if len(id_code) < 8:
+            raise ValueError('ID code is too short to contain version information')
+
+        # Assuming version is encoded in the first 4 bits of the ID code string
+        version_bin = id_code[:4]
+        if version_bin == 'XXXX':  # Handle cases where version is masked with 'X'
+            return 0
+        try:
+            version = int(version_bin, 2)
+            return version
+        except ValueError:
+            raise ValueError(f'Invalid ID code format: {id_code}')
+
+    def get_id_code_part_number(self):
+        """Extracts the part number from the BSDL content."""
+        id_code = self.get_id_code()
+
+        if len(id_code) < 8:
+            raise ValueError('ID code is too short to contain device information')
+
+        # Assuming part number is encoded in the 16 bits of the ID code string
+        # starting from the 5th.
+        part_number_bin = id_code[4:20]
+        try:
+            part_number = int(part_number_bin, 2)
+            return part_number
+        except ValueError:
+            raise ValueError(f'Invalid ID code format: {id_code}')
+
+    def get_id_code_manufacturer_identity(self):
+        """Extracts the identity of the manufacturer from the BSDL content."""
+        id_code = self.get_id_code()
+
+        if len(id_code) < 8:
+            raise ValueError('ID code is too short to contain manufacturer information')
+
+        # Assuming manufacturer is encoded in the 11 bits of the ID code string
+        # starting from the 22th bit.
+        manufacturer_bin = id_code[20:31]
+        try:
+            manufacturer = int(manufacturer_bin, 2)
+            return manufacturer
+        except ValueError:
+            raise ValueError(f'Invalid ID code format: {id_code}')
+
     def get_bsr_len(self):
         """Extracts the BSR length from the BSDL content."""
         return int(self.tree.entity().body().attr_bsr_len()[0].bsr_len().getText())  # noqa: E501
@@ -407,9 +456,9 @@ class CBBsdl():
 
             # Look for port_name : pin_num , pattern
             if i + 3 < child_count:
-                next1 = source.getChild(i + 1).getText() if hasattr(source.getChild(i + 1), 'getText') else ''
-                next2 = source.getChild(i + 2).getText() if hasattr(source.getChild(i + 2), 'getText') else ''
-                next3 = source.getChild(i + 3).getText() if hasattr(source.getChild(i + 3), 'getText') else ''
+                next1 = source.getChild(i + 1).getText() if hasattr(source.getChild(i + 1), 'getText') else ''  # noqa: E501
+                next2 = source.getChild(i + 2).getText() if hasattr(source.getChild(i + 2), 'getText') else ''  # noqa: E501
+                next3 = source.getChild(i + 3).getText() if hasattr(source.getChild(i + 3), 'getText') else ''  # noqa: E501
 
                 # Check for simple mapping: PORT : PIN ,
                 if next1 == ':' and next3 == ',' and next2 not in skip_tokens:
@@ -417,8 +466,8 @@ class CBBsdl():
                     pin_num = next2
 
                     # Validate that this looks like a valid port and pin
-                    if (len(port_name) > 0 and port_name[0].isalpha() and
-                            len(pin_num) > 0 and port_name not in skip_tokens):
+                    if (len(port_name) > 0 and port_name[0].isalpha()
+                            and len(pin_num) > 0 and port_name not in skip_tokens):  # noqa: W503
                         self.pin_map[pin_num] = port_name
                         self.pin_numbers.append(pin_num)
 
@@ -436,10 +485,11 @@ class CBBsdl():
                     j = i + 3
                     pins = []
                     while j < child_count:
-                        token = source.getChild(j).getText() if hasattr(source.getChild(j), 'getText') else ''
-                        if token == ')':
+                        token = source.getChild(j).getText() if hasattr(source.getChild(j), 'getText') else ''  # noqa: E501
+                        if token == ')':  # nosec B105
                             break
-                        elif token and token not in [',', ' ', '\t', '\n', '&', '"'] and len(token) > 0:
+                        elif token and token not in [',', ' ', '\t', '\n', '&', '"'] and \
+                                len(token) > 0:
                             pins.append(token)
                         j += 1
 

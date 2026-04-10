@@ -29,6 +29,22 @@ def print_pin_map(bsdl):
         print(f'  {pin_num}: {pin_desc}')
 
 
+def print_device_info(bsdl):
+    print('Device information:')
+    print(f'  Entity name: {bsdl.get_entity_name()}')
+    print(f'  Physical pin map: {bsdl.get_physical_pin_map()}')
+    print(f'  Instruction length: {bsdl.get_instr_len()}')
+    print(f'  BSR length: {bsdl.get_bsr_len()}')
+    id_code = bsdl.get_id_code()
+    if id_code is not None:
+        print(f'  IDCODE_REGISTER: {id_code}')
+        print(f'    Version: {bsdl.get_id_code_version()}')
+        print(f'    Manufacturer Identity: {bsdl.get_id_code_manufacturer_identity():#05x}')
+        print(f'    Part Number: {bsdl.get_id_code_part_number():#06x}')
+    else:
+        print('  IDCODE_REGISTER: Not found')
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Process a BSDL file.',
@@ -40,6 +56,8 @@ def main():
                         action='store_true', help='Print the BSR table')
     parser.add_argument('-p', '--print-pin-map',
                         action='store_true', help='Print the pin map')
+    parser.add_argument('-i', '--info',
+                        action='store_true', help='Print device information')
 
     if len(sys.argv) == 1:
         parser.print_usage()
@@ -47,7 +65,7 @@ def main():
 
     args = parser.parse_args()
 
-    bsdl = CBBsdl(args.bsdl_file)
+    bsdl = CBBsdl(args.bsdl_file, run_checks=False)
 
     if args.print_bsr_table:
         print_bsr_table(bsdl, args.bsdl_file)
@@ -57,6 +75,9 @@ def main():
 
     if args.print_pin_map:
         print_pin_map(bsdl)
+
+    if args.info:
+        print_device_info(bsdl)
 
 
 if __name__ == '__main__':

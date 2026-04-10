@@ -4,6 +4,9 @@ test0:
   entity_name: "LPC1857FET256"
   physical_pin_map: "LBGA256"
   id_code: "01110010100001001110000000101011"
+  id_code_version: "0x7"
+  id_code_manufacturer_identity: "0x015"
+  id_code_part_number: "0x284e"
   instr_len: 5
   bsr_len: "545"
   run_checks: false
@@ -22,6 +25,9 @@ test1:
   entity_name: "STM32G431_441_LQFP64"
   physical_pin_map: "LQFP64_PACKAGE"
   id_code: "XXXX0110010001101000000001000001"
+  id_code_version: "0"
+  id_code_manufacturer_identity: "0x020"
+  id_code_part_number: "0x6468"
   instr_len: 5
   bsr_len: "240"
   bsr_cell: "PC13_out"
@@ -40,6 +46,9 @@ test2:
   entity_name: "STM32G471_473_474_483_484_LQFP64"
   physical_pin_map: "LQFP64_PACKAGE"
   id_code: "XXXX0110010001101001000001000001"
+  id_code_version: "0"
+  id_code_manufacturer_identity: "0x020"
+  id_code_part_number: "0x6469"
   instr_len: 5
   bsr_len: "303"
   bsr_cell: "PC13_in"
@@ -57,6 +66,9 @@ test3:
   entity_name: "STM32U575_U585_LQFP64"
   physical_pin_map: "LQFP64_PACKAGE"
   id_code: "XXXX0110010010000010000001000001"
+  id_code_version: "0"
+  id_code_manufacturer_identity: "0x020"
+  id_code_part_number: "0x6482"
   instr_len: 5
   bsr_len: "393"
   bsr_cell: "PC13_out"
@@ -96,6 +108,9 @@ test5:
   entity_name: "CYCLONE_10_LP_10CL025U256"
   physical_pin_map: "FBGA256"
   id_code: "00000010000011110011000011011101"
+  id_code_version: "0"
+  id_code_manufacturer_identity: "0x06e"
+  id_code_part_number: "0x20f3"
   instr_len: 10
   bsr_len: "732"
   run_checks: false
