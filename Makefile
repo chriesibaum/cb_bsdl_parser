@@ -117,3 +117,6 @@ clean:
 
 mr_proper: clean
 	make -C ./cb_bsdl_parser/ clean
+
+venv_clean:
+	@rm -rf /tmp/cb_bsdl_parser
