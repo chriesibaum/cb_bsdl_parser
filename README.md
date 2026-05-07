@@ -82,9 +82,12 @@ curl -fL -o "$VIRTUAL_ENV/tools/antlr4-4.13.2-complete.jar" \
 ```
 
 
-## About Café - The source of coding! ;-)
+## About Café - The Heart of Coding! ;-)
 
-Do you like this project and would like to support it? I am delighted about every single Café- It keeps me running! Or would you sponsor the project on [github sponsors](https://github.com/sponsors/chriesibaum/)? Thanks for your support!
+Do you like this project and want to support it?
+I appreciate every single Café – it keeps me going!
+You can also sponsor the project on
+[github sponsors](https://github.com/sponsors/chriesibaum/)? Thanks for your support!
 
 <div align="center">
 <a href="https://www.buymeacoffee.com/chriesibaum" target="_blank">
