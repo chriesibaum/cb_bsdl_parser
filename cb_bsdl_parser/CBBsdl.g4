@@ -35,6 +35,7 @@ body
       | port_dec
       | pin_map
       | attr_instr_len
+      | attr_instr_opcode
       | attr_bsr_len
       | attr_bsr
       | undef_part
@@ -79,6 +80,40 @@ attr_instr_len
 
 instr_len
     : number
+    ;
+
+// attribute instruction opcode
+attr_instr_opcode
+    :
+    ATTRIBUTE
+    INSTR_OPCODE
+    OF
+    entity_name
+    COLON
+    ENTITY
+    IS
+    (opcode_def)+
+    SEMICOLON
+    ;
+
+opcode_def
+    :
+    QUOTES
+    opcode_name
+    BRACKET_OPEN
+    (opcode_val COMMA?)+
+    BRACKET_CLOSE
+    COMMA?
+    QUOTES
+    AMPERSAND?
+    ;
+
+opcode_name
+    : identifier
+    ;
+
+opcode_val
+    : INTEGER
     ;
 
 // attribute boundary scan register length

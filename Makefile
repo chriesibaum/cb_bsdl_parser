@@ -101,7 +101,7 @@ build: parser
 
 install: build
 	@$(E) Installing the package...
-	@pip install dist/cb_bsdl_parser*.whl --force-reinstall
+	@uv pip install dist/cb_bsdl_parser*.whl --force-reinstall
 
 
 clean:

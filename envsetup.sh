@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: 2025 Thomas@chriesibaum.dev
 
-VENV_DIR="/tmp/cb_bsdl_parser/.venv"
+VENV_DIR=".venv"
 ANTLR_VERSION="4.13.2"
 
 export ANTLR4_TOOLS_ANTLR_VERSION="$ANTLR_VERSION"

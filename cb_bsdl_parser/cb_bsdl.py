@@ -273,6 +273,26 @@ class CBBsdl():
         """Extracts the instruction length from the BSDL content."""
         return int(self.tree.entity().body().attr_instr_len()[0].instr_len().getText())  # noqa: E501
 
+    def get_instr_opcode(self, opcode_name):
+        """Extracts the instruction opcode value(s) for a given opcode name.
+
+        Returns a list of binary strings for the requested opcode.
+        Raises ValueError if the opcode or INSTRUCTION_OPCODE attribute is
+        not found.
+        """
+        attr_instr_opcode = self.tree.entity().body().attr_instr_opcode()
+
+        if len(attr_instr_opcode) == 0:
+            raise ValueError('INSTRUCTION_OPCODE not found in BSDL content')
+
+        for opcode_def in attr_instr_opcode[0].opcode_def():
+            name = opcode_def.opcode_name().getText()
+            if name.upper() == opcode_name.upper():
+                return int(opcode_def.opcode_val()[0].getText(), 2)
+
+        raise ValueError(
+            f"Opcode '{opcode_name}' not found in INSTRUCTION_OPCODE")
+
     def get_id_code(self):
         """Extracts the IDCODE_REGISTER value from the BSDL content."""
         body = self.tree.entity().body()

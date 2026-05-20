@@ -33,6 +33,8 @@ class Test_0_BsdlParser:
         self.expected_physical_pin_map = request.param['physical_pin_map']
 
         self.expected_instr_len = int(request.param.get('instr_len', 0))
+        self.expected_instr_opcode_name = request.param.get('instr_opcode_name', None)
+        self.expected_instr_opcode = int(request.param.get('instr_opcode', None), 2)
         self.expected_bsr_len = int(request.param['bsr_len'])
         self.run_checks = request.param.get('run_checks', True)
         self.expected_bsr_cell = request.param.get('bsr_cell', '')
@@ -92,6 +94,13 @@ class Test_0_BsdlParser:
         print(f'instr_length: {instr_len}')
         assert instr_len == self.expected_instr_len, \
             "Instruction length does not match expected value"
+
+    def test_instr_opcode(self):
+        print("Testing instruction opcode extraction")
+        instr_opcode = self.bdsl.get_instr_opcode(self.expected_instr_opcode_name)
+        print(f'instr_opcode: {instr_opcode}')
+        assert instr_opcode == self.expected_instr_opcode, \
+            "Instruction opcode does not match expected value"
 
     def test_bsr_length(self):
         print("Testing BSR length extraction")

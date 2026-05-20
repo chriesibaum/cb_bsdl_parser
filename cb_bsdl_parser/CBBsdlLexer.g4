@@ -9,6 +9,7 @@ STRING           : 'string' ;
 PHYSICAL_PIN_MAP : 'PHYSICAL_PIN_MAP' ;
 ATTRIBUTE        : 'attribute' ;
 INSTR_LEN        : 'INSTRUCTION_LENGTH' ;
+INSTR_OPCODE     : 'INSTRUCTION_OPCODE' ;
 BS_LEN           : 'BOUNDARY_LENGTH' ;
 BS_REG           : 'BOUNDARY_REGISTER' ;
 OF               : 'of' ;

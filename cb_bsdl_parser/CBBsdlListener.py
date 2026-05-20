@@ -80,6 +80,42 @@ class CBBsdlListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by CBBsdlParser#attr_instr_opcode.
+    def enterAttr_instr_opcode(self, ctx:CBBsdlParser.Attr_instr_opcodeContext):
+        pass
+
+    # Exit a parse tree produced by CBBsdlParser#attr_instr_opcode.
+    def exitAttr_instr_opcode(self, ctx:CBBsdlParser.Attr_instr_opcodeContext):
+        pass
+
+
+    # Enter a parse tree produced by CBBsdlParser#opcode_def.
+    def enterOpcode_def(self, ctx:CBBsdlParser.Opcode_defContext):
+        pass
+
+    # Exit a parse tree produced by CBBsdlParser#opcode_def.
+    def exitOpcode_def(self, ctx:CBBsdlParser.Opcode_defContext):
+        pass
+
+
+    # Enter a parse tree produced by CBBsdlParser#opcode_name.
+    def enterOpcode_name(self, ctx:CBBsdlParser.Opcode_nameContext):
+        pass
+
+    # Exit a parse tree produced by CBBsdlParser#opcode_name.
+    def exitOpcode_name(self, ctx:CBBsdlParser.Opcode_nameContext):
+        pass
+
+
+    # Enter a parse tree produced by CBBsdlParser#opcode_val.
+    def enterOpcode_val(self, ctx:CBBsdlParser.Opcode_valContext):
+        pass
+
+    # Exit a parse tree produced by CBBsdlParser#opcode_val.
+    def exitOpcode_val(self, ctx:CBBsdlParser.Opcode_valContext):
+        pass
+
+
     # Enter a parse tree produced by CBBsdlParser#attr_bsr_len.
     def enterAttr_bsr_len(self, ctx:CBBsdlParser.Attr_bsr_lenContext):
         pass
