@@ -13,11 +13,11 @@ test0:
   bsr_len: "545"
   run_checks: false
   bsr_cell: "PF_11_in"
-  bsr_data_cell: 2
-  bsr_cell_desc: "PF_11"
+  bsr_cell_num: 2
   bsr_cell_type: "BC_4"
+  bsr_cell_port_name: "PF_11"
   bsr_cell_func: "OBSERVE_ONLY"
-  bsr_cell_val: "X"
+  bsr_cell_safe: "X"
   bsr_ctrl_cell:
   bsr_disval:
 
@@ -35,11 +35,11 @@ test1:
   instr_opcode: "00001"
   bsr_len: "240"
   bsr_cell: "PC13_out"
-  bsr_data_cell: 223
-  bsr_cell_desc: "PC13"
+  bsr_cell_num: 223
   bsr_cell_type: "BC_1"
+  bsr_cell_port_name: "PC13"
   bsr_cell_func: "OUTPUT3"
-  bsr_cell_val: "X"
+  bsr_cell_safe: "X"
   bsr_ctrl_cell: 224
   bsr_disval: 1
 
@@ -58,13 +58,13 @@ test2:
   instr_opcode: "00001"
   bsr_len: "303"
   bsr_cell: "PC13_in"
-  bsr_data_cell: 285
-  bsr_cell_desc: "PC13"
+  bsr_cell_num: 285
   bsr_cell_type: "BC_4"
+  bsr_cell_port_name: "PC13"
   bsr_cell_func: "INPUT"
-  bsr_cell_val: "X"
+  bsr_cell_safe: "X"
+  bsr_cell_disval: "X"
   bsr_ctrl_cell:
-  bsr_disval:
 
 test3:
   name: "Test3 STM32U575_U585"
@@ -80,11 +80,11 @@ test3:
   instr_opcode: "00001"
   bsr_len: "393"
   bsr_cell: "PC13_out"
-  bsr_data_cell: 376
-  bsr_cell_desc: "PC13"
+  bsr_cell_num: 376
   bsr_cell_type: "BC_1"
+  bsr_cell_port_name: "PC13"
   bsr_cell_func: "OUTPUT3"
-  bsr_cell_val: "X"
+  bsr_cell_safe: "X"
   bsr_ctrl_cell: 377
   bsr_disval: 1
 
@@ -103,11 +103,11 @@ test4:
   # and the parser is designed to handle this discrepancy. Therefore, we skip the check.
   run_checks: false
   bsr_cell: "Y1(3)_out"
-  bsr_data_cell: 5
-  bsr_cell_desc: "Y1(3)"
+  bsr_cell_num: 5
   bsr_cell_type: "BC_1"
+  bsr_cell_port_name: "Y1(3)"
   bsr_cell_func: "output3"
-  bsr_cell_val: "X"
+  bsr_cell_safe: "X"
   bsr_ctrl_cell: 17
   bsr_disval: 1
 
@@ -127,10 +127,10 @@ test5:
   bsr_len: "732"
   run_checks: false
   bsr_cell: "IOT10_in"
-  bsr_data_cell: 450
-  bsr_cell_desc: "IOT10"
+  bsr_cell_num: 450
   bsr_cell_type: "BC_1"
+  bsr_cell_port_name: "IOT10"
   bsr_cell_func: "input"
-  bsr_cell_val: "X"
+  bsr_cell_safe: "X"
   bsr_ctrl_cell:
   bsr_disval:

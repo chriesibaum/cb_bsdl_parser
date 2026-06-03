@@ -136,7 +136,7 @@ class Test_check_pin_to_port_mapping:
         try:
             bsdl.check_pin_to_port_mapping()
         except ValueError as e:
-            assert "The following pins are not mapped to any port: ['56', '7']" in str(e)
+            assert "The following pins are not mapped to any port: ['7', '56']" in str(e)
             return
 
         assert False, 'Expected ValueError was not raised.'  # pragma: no cover
@@ -318,7 +318,8 @@ class Test_cell_desc_not_supported:
         try:
             bsdl = CBBsdl(bsdl_file, run_checks=False)  # noqa: F841
         except NotImplementedError as e:
-            assert "Cell_func 'internal_globi' not recognized for cell_desc 'cell_354'" in str(e)
+            assert "Cell_func 'internal_globi' not recognized"\
+                   " for cell_port_name 'cell_354'" in str(e)
             return
 
         assert False, 'Expected NotImplementedError was not raised.'  # pragma: no cover
@@ -330,7 +331,7 @@ class Test_get_bsr_xxx_for_unsupported_cell:
         bsdl = CBBsdl(bsdl_file, run_checks=False)
 
         try:
-            bsdl.get_bsr_data_cell('xxx')
+            bsdl.get_bsr_cell_num('xxx')
         except ValueError as e:
             assert "BSR cell 'xxx' not found in BSR content." in str(e)
             return
@@ -349,12 +350,12 @@ class Test_get_bsr_xxx_for_unsupported_cell:
 
         assert False, 'Expected ValueError was not raised.'  # pragma: no cover
 
-    def test_get_bsr_cell_desc(self):
+    def test_get_bsr_cell_port_name(self):
         bsdl_file = './test/bsdl_files/STM32U575_U585_LQFP64.bsd'
         bsdl = CBBsdl(bsdl_file, run_checks=False)
 
         try:
-            bsdl.get_bsr_cell_desc('xxx')
+            bsdl.get_bsr_cell_port_name('xxx')
         except ValueError as e:
             assert "BSR cell 'xxx' not found in BSR content." in str(e)
             return
@@ -373,24 +374,12 @@ class Test_get_bsr_xxx_for_unsupported_cell:
 
         assert False, 'Expected ValueError was not raised.'  # pragma: no cover
 
-    def test_get_bsr_cell_val(self):
+    def test_get_bsr_cell_ccell(self):
         bsdl_file = './test/bsdl_files/STM32U575_U585_LQFP64.bsd'
         bsdl = CBBsdl(bsdl_file, run_checks=False)
 
         try:
-            bsdl.get_bsr_cell_val('xxx')
-        except ValueError as e:
-            assert "BSR cell 'xxx' not found in BSR content." in str(e)
-            return
-
-        assert False, 'Expected ValueError was not raised.'  # pragma: no cover
-
-    def test_get_bsr_ctrl_cell(self):
-        bsdl_file = './test/bsdl_files/STM32U575_U585_LQFP64.bsd'
-        bsdl = CBBsdl(bsdl_file, run_checks=False)
-
-        try:
-            bsdl.get_bsr_ctrl_cell('xxx')
+            bsdl.get_bsr_cell_ccell('xxx')
         except ValueError as e:
             assert "BSR cell 'xxx' not found in BSR content." in str(e)
             return
@@ -402,7 +391,7 @@ class Test_get_bsr_xxx_for_unsupported_cell:
         bsdl = CBBsdl(bsdl_file, run_checks=False)
 
         try:
-            bsdl.get_bsr_disval('xxx')
+            bsdl.get_bsr_cell_disval('xxx')
         except ValueError as e:
             assert "BSR cell 'xxx' not found in BSR content." in str(e)
             return

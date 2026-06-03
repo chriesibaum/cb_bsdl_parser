@@ -17,21 +17,24 @@ class SkipError(Exception):
 
 
 class CBBsdl():
-    def __init__(self, bsdl_file=None, run_checks=True,
+    def __init__(self, bsdl=None, run_checks=True,
                  verbose=False):
 
         self.bsdl_file = None
         self.run_checks = run_checks
         self.verbose = verbose
 
-        # check if bsdl_file is a file or a file_blob
-        if os.path.isfile(bsdl_file):
-            self.bsdl_file = bsdl_file
+        # check if bsdl is a file or a file_blob
+        if os.path.isfile(bsdl):
+            self.bsdl_file = bsdl
 
             with open(self.bsdl_file, 'r') as file:
                 self.bsdl_blob = file.read()
+        elif len(bsdl) > 100:  # crude check if bsdl is a file blob
+            self.bsdl_blob = bsdl
         else:
-            self.bsdl_blob = bsdl_file
+            raise ValueError('BSDL input is neither a valid file path nor a file blob'
+                             f' (bsdl input : {bsdl[:100]}...)')
 
         lexer = CBBsdlLexer(InputStream(self.bsdl_blob))
         stream = CommonTokenStream(lexer)
@@ -145,13 +148,13 @@ class CBBsdl():
         unmapped_bsr_cells = []
 
         for bsr_cell in bsr.keys():
-            cell_desc = bsr[bsr_cell]['cell_desc']
+            cell_port_name = bsr[bsr_cell]['cell_port_name']
 
             # Skip checks for control cells
-            if cell_desc in ['*']:
+            if cell_port_name in ['*']:
                 continue
 
-            if cell_desc not in ports.keys():
+            if cell_port_name not in ports.keys():
                 unmapped_bsr_cells.append(bsr_cell)
 
         if len(unmapped_bsr_cells) > 0:
@@ -430,6 +433,13 @@ class CBBsdl():
                     self.pin_map[pin_num] = f'{port_name}.{j}'
                     self.pin_numbers.append(pin_num)
 
+        try:
+            self.pin_map = OrderedDict(
+                sorted(self.pin_map.items(), key=lambda t: int(t[0])))
+        except ValueError:
+            self.pin_map = OrderedDict(
+                sorted(self.pin_map.items(), key=lambda t: t[0]))
+
         log.info(f"Parsed {len(self.pin_map)} pin mappings from pin_def")
 
     def _parse_pin_map_from_constant(self, pin_map_node):
@@ -567,54 +577,53 @@ class CBBsdl():
         bsr_len = len(self.tree.entity().body().attr_bsr()[0].bsr_def())
 
         for i in range(bsr_len):
-            data_cell = int(self.tree.entity().body().attr_bsr()[0].bsr_def()[i].data_cell().getText())  # noqa: E501
+            cell_num = int(self.tree.entity().body().attr_bsr()[0].bsr_def()[i].cell_num().getText())  # noqa: E501
 
             if self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0() is not None:  # noqa: E501
                 cell_type = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_type().getText()  # noqa: E501
-                if self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_desc() is not None:  # noqa: E501
-                    cell_desc = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_desc().getText()  # noqa: E501
+                if self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_port_name() is not None:  # noqa: E501
+                    cell_port_name = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_port_name().getText()  # noqa: E501
                 else:
-                    cell_desc = '*'
+                    cell_port_name = '*'
 
                 cell_func = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_func().getText()  # noqa: E501
-                cell_val = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_val().getText()  # noqa: E501
-                ctrl_cell = 0
-                disval = 0
+                cell_safe = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell0().cell_safe().getText()  # noqa: E501
+                cell_ccell = 0
+                cell_disval = 0
 
             elif self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1() is not None:  # noqa: E501
                 cell_type = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_type().getText()  # noqa: E501
-                if self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_desc() is not None:  # noqa: E501
-                    cell_desc = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_desc().getText()  # noqa: E501
+                if self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_port_name() is not None:  # noqa: E501
+                    cell_port_name = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_port_name().getText()  # noqa: E501
                 else:
-                    cell_desc = '*'  # pragma: no cover
+                    cell_port_name = '*'  # pragma: no cover
 
                 cell_func = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_func().getText()  # noqa: E501
-                cell_val = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_val().getText()  # noqa: E501
-                ctrl_cell = int(self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().ctrl_cell().getText())  # noqa: E501
-                disval = int(self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().disval().getText())  # noqa: E501
+                cell_safe = self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_safe().getText()  # noqa: E501
+                cell_ccell = int(self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_ccell().getText())  # noqa: E501
+                cell_disval = int(self.tree.entity().body().attr_bsr()[0].bsr_def()[i].bsr_cell1().cell_disval().getText())  # noqa: E501
 
             else:  # pragma: no cover
-                data_cell = 0
+                cell_num = 'undef'
                 cell_type = 'undef'
-                cell_desc = 'undef'
+                cell_port_name = 'undef'
                 cell_func = 'undef'
-                cell_val = 'undef'
-                ctrl_cell = 0
-                disval = 0
+                cell_safe = 'undef'
+                cell_ccell = 0
+                cell_disval = 0
 
             bsr_cell = {
-                'data_cell': data_cell,
+                'cell_num': cell_num,
                 'cell_type': cell_type,
-                'cell_desc': cell_desc,
+                'cell_port_name': cell_port_name,
                 'cell_func': cell_func,
-                'cell_val': cell_val,
-                'ctrl_cell': ctrl_cell,
-                'disval': disval
+                'cell_safe': cell_safe,
+                'cell_ccell': cell_ccell,
+                'cell_disval': cell_disval
             }
 
-            if cell_desc == '*':
-                cell_desc = f'cell_{data_cell}'
-
+            if cell_port_name == '*':
+                cell_port_name = f'cell_{cell_num}'
             if cell_func.upper() in ['INPUT', 'OBSERVE_ONLY']:
                 key_a = 'in'
             elif cell_func.upper() in ['OUTPUT', 'OUTPUT2', 'OUTPUT3']:
@@ -626,12 +635,12 @@ class CBBsdl():
             else:
                 raise NotImplementedError(
                     f"Cell_func '{cell_func}' not recognized for "
-                    f"cell_desc '{cell_desc}'")
+                    f"cell_port_name '{cell_port_name}'")
 
             if key_a != '':
-                key = f'{cell_desc}_{key_a}'
+                key = f'{cell_port_name}_{key_a}'
             else:
-                key = cell_desc
+                key = cell_port_name
 
             self.bsr[key] = bsr_cell
 
@@ -648,37 +657,37 @@ class CBBsdl():
                 if self.verbose:
                     log.debug(
                         f'Control cell found: {cell_desc}, '
-                        f'data_cell: {cell['data_cell']} '
-                        f'ctrl_cell: {cell['ctrl_cell']}   ', end='')
+                        f'cell_num: {cell['cell_num']} '
+                        f'cell_ccell: {cell['cell_ccell']}   ', end='')
 
                 for key, ccell in self.bsr.items():
-                    if ccell['ctrl_cell'] != '' and \
-                            int(ccell['ctrl_cell']) == int(cell['ctrl_cell']):
+                    if ccell['cell_ccell'] != '' and \
+                            int(ccell['cell_ccell']) == int(cell['cell_ccell']):
                         ctrl_cell_used += 1
                         if self.verbose:
                             log.debug(
-                                f'  {key} has ctrl_cell {ccell['ctrl_cell']}')
+                                f'  {key} has cell_ccell {ccell['cell_ccell']}')
 
                 if ctrl_cell_used == 1:
-                    new_key_ctrl_cell = f'{cell['cell_desc']}_ctrl'
-                    old_key_ctrl_cell = f'cell_{cell['ctrl_cell']}_ctrl'
+                    new_key_ctrl_cell = f'{cell['cell_port_name']}_ctrl'
+                    old_key_ctrl_cell = f'cell_{cell['cell_ccell']}_ctrl'
 
                     if self.verbose:
                         log.debug(
                             f'modify key: {old_key_ctrl_cell} -> '
                             f'{new_key_ctrl_cell}  ')
 
-                    if int(cell['data_cell']) != int(cell['ctrl_cell']):
+                    if int(cell['cell_num']) != int(cell['cell_ccell']):
                         self.bsr[new_key_ctrl_cell] = self.bsr.pop(
                             old_key_ctrl_cell)
                     else:
                         log.warning(
-                            f'Warning: {cell['cell_desc']} does not have '
-                            'a separate ctrl_cell')
+                            f'Warning: {cell['cell_port_name']} does not have '
+                            'a separate cell_ccell')
 
-        # Sort the BSR content by data_cell
+        # Sort the BSR content by cell_num
         self.bsr = OrderedDict(
-            sorted(self.bsr.items(), key=lambda t: t[1]['data_cell']))
+            sorted(self.bsr.items(), key=lambda t: t[1]['cell_num']))
 
     def get_bsr(self):
         """Returns the BSR content."""
@@ -695,17 +704,17 @@ class CBBsdl():
 
             if self.bsr[bsr_cell]['cell_func'] != 'internal':
                 print(f'  {bsr_cell:10s} '
-                      f'{self.bsr[bsr_cell]['data_cell']:3d}   '
+                      f'{self.bsr[bsr_cell]['cell_num']:3d}   '
                       f'type: {self.bsr[bsr_cell]['cell_type']:4s}   '
-                      f'desc: {self.bsr[bsr_cell]['cell_desc']:6s}   '
+                      f'port name: {self.bsr[bsr_cell]['cell_port_name']:6s}   '
                       f'func: {self.bsr[bsr_cell]['cell_func']:9s}   '
-                      f'val: {self.bsr[bsr_cell]['cell_val']:1s}   '
-                      f'ctrl_cell: {self.bsr[bsr_cell]['ctrl_cell']:3d}')
+                      f'safe: {self.bsr[bsr_cell]['cell_safe']:1s}   '
+                      f'ccell: {self.bsr[bsr_cell]['cell_ccell']:3d}')
 
-    def get_bsr_data_cell(self, bsr_cell):
+    def get_bsr_cell_num(self, bsr_cell):
         """Returns the cell number for a given BSR cell."""
         if bsr_cell in self.bsr:
-            return self.bsr[bsr_cell]['data_cell']
+            return self.bsr[bsr_cell]['cell_num']
         else:
             raise ValueError(f"BSR cell '{bsr_cell}' not found in BSR content.")
 
@@ -716,10 +725,10 @@ class CBBsdl():
         else:
             raise ValueError(f"BSR cell '{bsr_cell}' not found in BSR content.")
 
-    def get_bsr_cell_desc(self, bsr_cell):
-        """Returns the cell description for a given BSR cell."""
+    def get_bsr_cell_port_name(self, bsr_cell):
+        """Returns the cell port name for a given BSR cell."""
         if bsr_cell in self.bsr:
-            return self.bsr[bsr_cell]['cell_desc']
+            return self.bsr[bsr_cell]['cell_port_name']
         else:
             raise ValueError(f"BSR cell '{bsr_cell}' not found in BSR content.")
 
@@ -730,23 +739,34 @@ class CBBsdl():
         else:
             raise ValueError(f"BSR cell '{bsr_cell}' not found in BSR content.")
 
-    def get_bsr_cell_val(self, bsr_cell):
+    def get_bsr_cell_safe(self, bsr_cell):
         """Returns the cell value for a given BSR cell."""
         if bsr_cell in self.bsr:
-            return self.bsr[bsr_cell]['cell_val']
+            return self.bsr[bsr_cell]['cell_safe']
         else:
             raise ValueError(f"BSR cell '{bsr_cell}' not found in BSR content.")
 
-    def get_bsr_ctrl_cell(self, bsr_cell):
+    def get_bsr_cell_ccell(self, bsr_cell):
         """Returns the control cell for a given BSR cell."""
         if bsr_cell in self.bsr:
-            return self.bsr[bsr_cell]['ctrl_cell']
+            return self.bsr[bsr_cell]['cell_ccell']
         else:
             raise ValueError(f"BSR cell '{bsr_cell}' not found in BSR content.")
 
-    def get_bsr_disval(self, bsr_cell):
+    def get_bsr_cell_disval(self, bsr_cell):
         """Returns the disable value for a given BSR cell."""
         if bsr_cell in self.bsr:
-            return self.bsr[bsr_cell]['disval']
+            return self.bsr[bsr_cell]['cell_disval']
         else:
             raise ValueError(f"BSR cell '{bsr_cell}' not found in BSR content.")
+
+    def get_bsr_safe_vals(self):
+        """Returns an int of safe values for all BSR cells."""
+        safe_values = 0
+        for bsr_cell in self.bsr.keys():
+            if self.bsr[bsr_cell]['cell_safe'] in ['0', '1']:
+                cell_safe = int(self.bsr[bsr_cell]['cell_safe'])
+            else:
+                cell_safe = 0
+            safe_values |= cell_safe << self.bsr[bsr_cell]['cell_num']
+        return safe_values

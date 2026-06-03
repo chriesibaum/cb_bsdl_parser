@@ -31,9 +31,9 @@ public class CBBsdlParser extends Parser {
 		RULE_port_def = 15, RULE_port_name = 16, RULE_port_function = 17, RULE_port_type = 18, 
 		RULE_bit = 19, RULE_bit_vector = 20, RULE_pin_map = 21, RULE_pin_def = 22, 
 		RULE_pin_num = 23, RULE_pin_num_arr = 24, RULE_attr_bsr = 25, RULE_bsr_def = 26, 
-		RULE_data_cell = 27, RULE_bsr_cell0 = 28, RULE_bsr_cell1 = 29, RULE_cell_type = 30, 
-		RULE_cell_desc = 31, RULE_cell_func = 32, RULE_cell_val = 33, RULE_ctrl_cell = 34, 
-		RULE_disval = 35, RULE_bit_range = 36, RULE_undef_part = 37, RULE_number = 38, 
+		RULE_cell_num = 27, RULE_bsr_cell0 = 28, RULE_bsr_cell1 = 29, RULE_cell_type = 30, 
+		RULE_cell_port_name = 31, RULE_cell_func = 32, RULE_cell_safe = 33, RULE_cell_ccell = 34, 
+		RULE_cell_disval = 35, RULE_bit_range = 36, RULE_undef_part = 37, RULE_number = 38, 
 		RULE_identifier = 39, RULE_comment = 40;
 	private static String[] makeRuleNames() {
 		return new String[] {
@@ -41,9 +41,10 @@ public class CBBsdlParser extends Parser {
 			"attr_instr_len", "instr_len", "attr_instr_opcode", "opcode_def", "opcode_name", 
 			"opcode_val", "attr_bsr_len", "bsr_len", "port_dec", "port_def", "port_name", 
 			"port_function", "port_type", "bit", "bit_vector", "pin_map", "pin_def", 
-			"pin_num", "pin_num_arr", "attr_bsr", "bsr_def", "data_cell", "bsr_cell0", 
-			"bsr_cell1", "cell_type", "cell_desc", "cell_func", "cell_val", "ctrl_cell", 
-			"disval", "bit_range", "undef_part", "number", "identifier", "comment"
+			"pin_num", "pin_num_arr", "attr_bsr", "bsr_def", "cell_num", "bsr_cell0", 
+			"bsr_cell1", "cell_type", "cell_port_name", "cell_func", "cell_safe", 
+			"cell_ccell", "cell_disval", "bit_range", "undef_part", "number", "identifier", 
+			"comment"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -1740,8 +1741,8 @@ public class CBBsdlParser extends Parser {
 		public TerminalNode QUOTES(int i) {
 			return getToken(CBBsdlParser.QUOTES, i);
 		}
-		public Data_cellContext data_cell() {
-			return getRuleContext(Data_cellContext.class,0);
+		public Cell_numContext cell_num() {
+			return getRuleContext(Cell_numContext.class,0);
 		}
 		public TerminalNode BRACKET_OPEN() { return getToken(CBBsdlParser.BRACKET_OPEN, 0); }
 		public TerminalNode BRACKET_CLOSE() { return getToken(CBBsdlParser.BRACKET_CLOSE, 0); }
@@ -1769,7 +1770,7 @@ public class CBBsdlParser extends Parser {
 			setState(301);
 			match(QUOTES);
 			setState(302);
-			data_cell();
+			cell_num();
 			setState(303);
 			match(BRACKET_OPEN);
 			setState(306);
@@ -1826,17 +1827,17 @@ public class CBBsdlParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Data_cellContext extends ParserRuleContext {
+	public static class Cell_numContext extends ParserRuleContext {
 		public TerminalNode INTEGER() { return getToken(CBBsdlParser.INTEGER, 0); }
-		public Data_cellContext(ParserRuleContext parent, int invokingState) {
+		public Cell_numContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_data_cell; }
+		@Override public int getRuleIndex() { return RULE_cell_num; }
 	}
 
-	public final Data_cellContext data_cell() throws RecognitionException {
-		Data_cellContext _localctx = new Data_cellContext(_ctx, getState());
-		enterRule(_localctx, 54, RULE_data_cell);
+	public final Cell_numContext cell_num() throws RecognitionException {
+		Cell_numContext _localctx = new Cell_numContext(_ctx, getState());
+		enterRule(_localctx, 54, RULE_cell_num);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1867,11 +1868,11 @@ public class CBBsdlParser extends Parser {
 		public Cell_funcContext cell_func() {
 			return getRuleContext(Cell_funcContext.class,0);
 		}
-		public Cell_valContext cell_val() {
-			return getRuleContext(Cell_valContext.class,0);
+		public Cell_safeContext cell_safe() {
+			return getRuleContext(Cell_safeContext.class,0);
 		}
-		public Cell_descContext cell_desc() {
-			return getRuleContext(Cell_descContext.class,0);
+		public Cell_port_nameContext cell_port_name() {
+			return getRuleContext(Cell_port_nameContext.class,0);
 		}
 		public TerminalNode ASTERISK() { return getToken(CBBsdlParser.ASTERISK, 0); }
 		public Bsr_cell0Context(ParserRuleContext parent, int invokingState) {
@@ -1900,7 +1901,7 @@ public class CBBsdlParser extends Parser {
 			case INTEGER:
 				{
 				setState(320);
-				cell_desc();
+				cell_port_name();
 				}
 				break;
 			case ASTERISK:
@@ -1919,7 +1920,7 @@ public class CBBsdlParser extends Parser {
 			setState(326);
 			match(COMMA);
 			setState(327);
-			cell_val();
+			cell_safe();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1942,20 +1943,20 @@ public class CBBsdlParser extends Parser {
 		public TerminalNode COMMA(int i) {
 			return getToken(CBBsdlParser.COMMA, i);
 		}
-		public Cell_descContext cell_desc() {
-			return getRuleContext(Cell_descContext.class,0);
+		public Cell_port_nameContext cell_port_name() {
+			return getRuleContext(Cell_port_nameContext.class,0);
 		}
 		public Cell_funcContext cell_func() {
 			return getRuleContext(Cell_funcContext.class,0);
 		}
-		public Cell_valContext cell_val() {
-			return getRuleContext(Cell_valContext.class,0);
+		public Cell_safeContext cell_safe() {
+			return getRuleContext(Cell_safeContext.class,0);
 		}
-		public Ctrl_cellContext ctrl_cell() {
-			return getRuleContext(Ctrl_cellContext.class,0);
+		public Cell_ccellContext cell_ccell() {
+			return getRuleContext(Cell_ccellContext.class,0);
 		}
-		public DisvalContext disval() {
-			return getRuleContext(DisvalContext.class,0);
+		public Cell_disvalContext cell_disval() {
+			return getRuleContext(Cell_disvalContext.class,0);
 		}
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
@@ -1977,7 +1978,7 @@ public class CBBsdlParser extends Parser {
 			setState(330);
 			match(COMMA);
 			setState(331);
-			cell_desc();
+			cell_port_name();
 			setState(332);
 			match(COMMA);
 			setState(333);
@@ -1985,15 +1986,15 @@ public class CBBsdlParser extends Parser {
 			setState(334);
 			match(COMMA);
 			setState(335);
-			cell_val();
+			cell_safe();
 			setState(336);
 			match(COMMA);
 			setState(337);
-			ctrl_cell();
+			cell_ccell();
 			setState(338);
 			match(COMMA);
 			setState(339);
-			disval();
+			cell_disval();
 			setState(340);
 			match(COMMA);
 			setState(341);
@@ -2042,7 +2043,7 @@ public class CBBsdlParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Cell_descContext extends ParserRuleContext {
+	public static class Cell_port_nameContext extends ParserRuleContext {
 		public List<IdentifierContext> identifier() {
 			return getRuleContexts(IdentifierContext.class);
 		}
@@ -2063,15 +2064,15 @@ public class CBBsdlParser extends Parser {
 		public TerminalNode BRACKET_CLOSE(int i) {
 			return getToken(CBBsdlParser.BRACKET_CLOSE, i);
 		}
-		public Cell_descContext(ParserRuleContext parent, int invokingState) {
+		public Cell_port_nameContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_cell_desc; }
+		@Override public int getRuleIndex() { return RULE_cell_port_name; }
 	}
 
-	public final Cell_descContext cell_desc() throws RecognitionException {
-		Cell_descContext _localctx = new Cell_descContext(_ctx, getState());
-		enterRule(_localctx, 62, RULE_cell_desc);
+	public final Cell_port_nameContext cell_port_name() throws RecognitionException {
+		Cell_port_nameContext _localctx = new Cell_port_nameContext(_ctx, getState());
+		enterRule(_localctx, 62, RULE_cell_port_name);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -2160,22 +2161,22 @@ public class CBBsdlParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Cell_valContext extends ParserRuleContext {
+	public static class Cell_safeContext extends ParserRuleContext {
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
 		}
 		public NumberContext number() {
 			return getRuleContext(NumberContext.class,0);
 		}
-		public Cell_valContext(ParserRuleContext parent, int invokingState) {
+		public Cell_safeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_cell_val; }
+		@Override public int getRuleIndex() { return RULE_cell_safe; }
 	}
 
-	public final Cell_valContext cell_val() throws RecognitionException {
-		Cell_valContext _localctx = new Cell_valContext(_ctx, getState());
-		enterRule(_localctx, 66, RULE_cell_val);
+	public final Cell_safeContext cell_safe() throws RecognitionException {
+		Cell_safeContext _localctx = new Cell_safeContext(_ctx, getState());
+		enterRule(_localctx, 66, RULE_cell_safe);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2211,19 +2212,19 @@ public class CBBsdlParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class Ctrl_cellContext extends ParserRuleContext {
+	public static class Cell_ccellContext extends ParserRuleContext {
 		public NumberContext number() {
 			return getRuleContext(NumberContext.class,0);
 		}
-		public Ctrl_cellContext(ParserRuleContext parent, int invokingState) {
+		public Cell_ccellContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_ctrl_cell; }
+		@Override public int getRuleIndex() { return RULE_cell_ccell; }
 	}
 
-	public final Ctrl_cellContext ctrl_cell() throws RecognitionException {
-		Ctrl_cellContext _localctx = new Ctrl_cellContext(_ctx, getState());
-		enterRule(_localctx, 68, RULE_ctrl_cell);
+	public final Cell_ccellContext cell_ccell() throws RecognitionException {
+		Cell_ccellContext _localctx = new Cell_ccellContext(_ctx, getState());
+		enterRule(_localctx, 68, RULE_cell_ccell);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2243,19 +2244,19 @@ public class CBBsdlParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class DisvalContext extends ParserRuleContext {
+	public static class Cell_disvalContext extends ParserRuleContext {
 		public NumberContext number() {
 			return getRuleContext(NumberContext.class,0);
 		}
-		public DisvalContext(ParserRuleContext parent, int invokingState) {
+		public Cell_disvalContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_disval; }
+		@Override public int getRuleIndex() { return RULE_cell_disval; }
 	}
 
-	public final DisvalContext disval() throws RecognitionException {
-		DisvalContext _localctx = new DisvalContext(_ctx, getState());
-		enterRule(_localctx, 70, RULE_disval);
+	public final Cell_disvalContext cell_disval() throws RecognitionException {
+		Cell_disvalContext _localctx = new Cell_disvalContext(_ctx, getState());
+		enterRule(_localctx, 70, RULE_cell_disval);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{

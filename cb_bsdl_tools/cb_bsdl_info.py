@@ -10,15 +10,37 @@ def print_bsr_table(bsdl, bsdl_file):
     bsdl.print_bsr_table()
 
 
+def print_bsr_cell_safe(bsdl):
+    print('Calculating BSR safe value...')
+    bsr = bsdl.get_bsr_safe_vals()
+    # print in hex with leading zeros, width based on BSR length
+    print(f'BSR safe value: {bsr:#0{bsdl.get_bsr_len() // 4 + 2}x}')
+
+    # print the safe value in binary, with leading zeros, grouped in 16-bit blocks
+    bsr_len = bsdl.get_bsr_len()
+    bsr_bin = f'{bsr:0{bsr_len}b}'
+    print('BSR safe value (binary):')
+    pad = (16 - bsr_len % 16) % 16
+    padded = ' ' * pad + bsr_bin
+    for i in range(0, len(padded), 16):
+        block = padded[i:i + 16]
+        bit_num = bsr_len - 1 - max(i - pad, 0)
+        grouped = ' '.join(block[j:j + 4] for j in range(0, 16, 4))
+        actual_bits = block.replace(' ', '')
+        hex_width = (len(actual_bits) + 3) // 4
+        hex_str = f'{int(actual_bits, 2):0{hex_width}x}' if actual_bits else ''
+        print(f'  [{bit_num:>4}]: {grouped}  0x{hex_str}')
+
+
 def print_cell_info(bsdl, cell):
     print(f'Information for cell: {cell}')
     try:
-        print(f'  data_cell:  {bsdl.get_bsr_data_cell(cell)}')
-        print(f'  cell_type: {bsdl.get_bsr_cell_type(cell)}')
-        print(f'  cell_desc: {bsdl.get_bsr_cell_desc(cell)}')
-        print(f'  cell_func: {bsdl.get_bsr_cell_func(cell)}')
-        print(f'  cell_val:  {bsdl.get_bsr_cell_val(cell)}')
-        print(f'  ctrl_cell: {bsdl.get_bsr_ctrl_cell(cell)}')
+        print(f'  cell_num:       {bsdl.get_bsr_cell_num(cell)}')
+        print(f'  cell_type:      {bsdl.get_bsr_cell_type(cell)}')
+        print(f'  cell_port_name: {bsdl.get_bsr_cell_port_name(cell)}')
+        print(f'  cell_func:      {bsdl.get_bsr_cell_func(cell)}')
+        print(f'  cell_safe:      {bsdl.get_bsr_cell_safe(cell)}')
+        print(f'  cell_ccell:     {bsdl.get_bsr_cell_ccell(cell)}')
     except Exception as e:
         print(f'Error retrieving information for cell {cell}: {e}')
 
@@ -54,6 +76,8 @@ def main():
                         default=None, help='Cell name to query')
     parser.add_argument('-b', '--print-bsr-table',
                         action='store_true', help='Print the BSR table')
+    parser.add_argument('-s', '--print-bsr-safe-val',
+                        action='store_true', help='Print the BSR safe value')
     parser.add_argument('-p', '--print-pin-map',
                         action='store_true', help='Print the pin map')
     parser.add_argument('-i', '--info',
@@ -70,6 +94,9 @@ def main():
     if args.print_bsr_table:
         print_bsr_table(bsdl, args.bsdl_file)
 
+    if args.print_bsr_safe_val:
+        print_bsr_cell_safe(bsdl)
+
     if args.cell is not None:
         print_cell_info(bsdl, args.cell)
 
@@ -80,5 +107,5 @@ def main():
         print_device_info(bsdl)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()

@@ -241,7 +241,7 @@ attr_bsr
 bsr_def
     :
     QUOTES
-    data_cell
+    cell_num
     BRACKET_OPEN
     (bsr_cell0 | bsr_cell1)
     BRACKET_CLOSE
@@ -250,7 +250,7 @@ bsr_def
     AMPERSAND?
     ;
 
-data_cell
+cell_num
     :
     INTEGER
     ;
@@ -259,26 +259,26 @@ bsr_cell0
     :
     cell_type
     COMMA
-    (cell_desc | ASTERISK)
+    (cell_port_name | ASTERISK)
     COMMA
     cell_func
     COMMA
-    cell_val
+    cell_safe
     ;
 
 bsr_cell1
     :
     cell_type
     COMMA
-    cell_desc
+    cell_port_name
     COMMA
     cell_func
     COMMA
-    cell_val
+    cell_safe
     COMMA
-    ctrl_cell
+    cell_ccell
     COMMA
-    disval
+    cell_disval
     COMMA
     identifier
     ;
@@ -288,7 +288,7 @@ cell_type
     ID
     ;
 
-cell_desc
+cell_port_name
     :
     (
       identifier
@@ -303,17 +303,17 @@ cell_func
     ID
     ;
 
-cell_val
+cell_safe
     :
     (identifier | number)
     ;
 
-ctrl_cell
+cell_ccell
     :
     number
     ;
 
-disval
+cell_disval
     :
     number
     ;

@@ -202,15 +202,15 @@ class CBBsdlParser ( Parser ):
     RULE_pin_num_arr = 24
     RULE_attr_bsr = 25
     RULE_bsr_def = 26
-    RULE_data_cell = 27
+    RULE_cell_num = 27
     RULE_bsr_cell0 = 28
     RULE_bsr_cell1 = 29
     RULE_cell_type = 30
-    RULE_cell_desc = 31
+    RULE_cell_port_name = 31
     RULE_cell_func = 32
-    RULE_cell_val = 33
-    RULE_ctrl_cell = 34
-    RULE_disval = 35
+    RULE_cell_safe = 33
+    RULE_cell_ccell = 34
+    RULE_cell_disval = 35
     RULE_bit_range = 36
     RULE_undef_part = 37
     RULE_number = 38
@@ -222,10 +222,10 @@ class CBBsdlParser ( Parser ):
                    "opcode_def", "opcode_name", "opcode_val", "attr_bsr_len", 
                    "bsr_len", "port_dec", "port_def", "port_name", "port_function", 
                    "port_type", "bit", "bit_vector", "pin_map", "pin_def", 
-                   "pin_num", "pin_num_arr", "attr_bsr", "bsr_def", "data_cell", 
-                   "bsr_cell0", "bsr_cell1", "cell_type", "cell_desc", "cell_func", 
-                   "cell_val", "ctrl_cell", "disval", "bit_range", "undef_part", 
-                   "number", "identifier", "comment" ]
+                   "pin_num", "pin_num_arr", "attr_bsr", "bsr_def", "cell_num", 
+                   "bsr_cell0", "bsr_cell1", "cell_type", "cell_port_name", 
+                   "cell_func", "cell_safe", "cell_ccell", "cell_disval", 
+                   "bit_range", "undef_part", "number", "identifier", "comment" ]
 
     EOF = Token.EOF
     ENTITY=1
@@ -2268,8 +2268,8 @@ class CBBsdlParser ( Parser ):
             else:
                 return self.getToken(CBBsdlParser.QUOTES, i)
 
-        def data_cell(self):
-            return self.getTypedRuleContext(CBBsdlParser.Data_cellContext,0)
+        def cell_num(self):
+            return self.getTypedRuleContext(CBBsdlParser.Cell_numContext,0)
 
 
         def BRACKET_OPEN(self):
@@ -2316,7 +2316,7 @@ class CBBsdlParser ( Parser ):
             self.state = 301
             self.match(CBBsdlParser.QUOTES)
             self.state = 302
-            self.data_cell()
+            self.cell_num()
             self.state = 303
             self.match(CBBsdlParser.BRACKET_OPEN)
             self.state = 306
@@ -2362,7 +2362,7 @@ class CBBsdlParser ( Parser ):
         return localctx
 
 
-    class Data_cellContext(ParserRuleContext):
+    class Cell_numContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2373,23 +2373,23 @@ class CBBsdlParser ( Parser ):
             return self.getToken(CBBsdlParser.INTEGER, 0)
 
         def getRuleIndex(self):
-            return CBBsdlParser.RULE_data_cell
+            return CBBsdlParser.RULE_cell_num
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterData_cell" ):
-                listener.enterData_cell(self)
+            if hasattr( listener, "enterCell_num" ):
+                listener.enterCell_num(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitData_cell" ):
-                listener.exitData_cell(self)
+            if hasattr( listener, "exitCell_num" ):
+                listener.exitCell_num(self)
 
 
 
 
-    def data_cell(self):
+    def cell_num(self):
 
-        localctx = CBBsdlParser.Data_cellContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 54, self.RULE_data_cell)
+        localctx = CBBsdlParser.Cell_numContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 54, self.RULE_cell_num)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 316
@@ -2424,12 +2424,12 @@ class CBBsdlParser ( Parser ):
             return self.getTypedRuleContext(CBBsdlParser.Cell_funcContext,0)
 
 
-        def cell_val(self):
-            return self.getTypedRuleContext(CBBsdlParser.Cell_valContext,0)
+        def cell_safe(self):
+            return self.getTypedRuleContext(CBBsdlParser.Cell_safeContext,0)
 
 
-        def cell_desc(self):
-            return self.getTypedRuleContext(CBBsdlParser.Cell_descContext,0)
+        def cell_port_name(self):
+            return self.getTypedRuleContext(CBBsdlParser.Cell_port_nameContext,0)
 
 
         def ASTERISK(self):
@@ -2464,7 +2464,7 @@ class CBBsdlParser ( Parser ):
             token = self._input.LA(1)
             if token in [26, 29, 30, 38, 40]:
                 self.state = 320
-                self.cell_desc()
+                self.cell_port_name()
                 pass
             elif token in [34]:
                 self.state = 321
@@ -2480,7 +2480,7 @@ class CBBsdlParser ( Parser ):
             self.state = 326
             self.match(CBBsdlParser.COMMA)
             self.state = 327
-            self.cell_val()
+            self.cell_safe()
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -2507,24 +2507,24 @@ class CBBsdlParser ( Parser ):
             else:
                 return self.getToken(CBBsdlParser.COMMA, i)
 
-        def cell_desc(self):
-            return self.getTypedRuleContext(CBBsdlParser.Cell_descContext,0)
+        def cell_port_name(self):
+            return self.getTypedRuleContext(CBBsdlParser.Cell_port_nameContext,0)
 
 
         def cell_func(self):
             return self.getTypedRuleContext(CBBsdlParser.Cell_funcContext,0)
 
 
-        def cell_val(self):
-            return self.getTypedRuleContext(CBBsdlParser.Cell_valContext,0)
+        def cell_safe(self):
+            return self.getTypedRuleContext(CBBsdlParser.Cell_safeContext,0)
 
 
-        def ctrl_cell(self):
-            return self.getTypedRuleContext(CBBsdlParser.Ctrl_cellContext,0)
+        def cell_ccell(self):
+            return self.getTypedRuleContext(CBBsdlParser.Cell_ccellContext,0)
 
 
-        def disval(self):
-            return self.getTypedRuleContext(CBBsdlParser.DisvalContext,0)
+        def cell_disval(self):
+            return self.getTypedRuleContext(CBBsdlParser.Cell_disvalContext,0)
 
 
         def identifier(self):
@@ -2556,7 +2556,7 @@ class CBBsdlParser ( Parser ):
             self.state = 330
             self.match(CBBsdlParser.COMMA)
             self.state = 331
-            self.cell_desc()
+            self.cell_port_name()
             self.state = 332
             self.match(CBBsdlParser.COMMA)
             self.state = 333
@@ -2564,15 +2564,15 @@ class CBBsdlParser ( Parser ):
             self.state = 334
             self.match(CBBsdlParser.COMMA)
             self.state = 335
-            self.cell_val()
+            self.cell_safe()
             self.state = 336
             self.match(CBBsdlParser.COMMA)
             self.state = 337
-            self.ctrl_cell()
+            self.cell_ccell()
             self.state = 338
             self.match(CBBsdlParser.COMMA)
             self.state = 339
-            self.disval()
+            self.cell_disval()
             self.state = 340
             self.match(CBBsdlParser.COMMA)
             self.state = 341
@@ -2627,7 +2627,7 @@ class CBBsdlParser ( Parser ):
         return localctx
 
 
-    class Cell_descContext(ParserRuleContext):
+    class Cell_port_nameContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2661,23 +2661,23 @@ class CBBsdlParser ( Parser ):
                 return self.getToken(CBBsdlParser.BRACKET_CLOSE, i)
 
         def getRuleIndex(self):
-            return CBBsdlParser.RULE_cell_desc
+            return CBBsdlParser.RULE_cell_port_name
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterCell_desc" ):
-                listener.enterCell_desc(self)
+            if hasattr( listener, "enterCell_port_name" ):
+                listener.enterCell_port_name(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitCell_desc" ):
-                listener.exitCell_desc(self)
+            if hasattr( listener, "exitCell_port_name" ):
+                listener.exitCell_port_name(self)
 
 
 
 
-    def cell_desc(self):
+    def cell_port_name(self):
 
-        localctx = CBBsdlParser.Cell_descContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 62, self.RULE_cell_desc)
+        localctx = CBBsdlParser.Cell_port_nameContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 62, self.RULE_cell_port_name)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
@@ -2761,7 +2761,7 @@ class CBBsdlParser ( Parser ):
         return localctx
 
 
-    class Cell_valContext(ParserRuleContext):
+    class Cell_safeContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2777,23 +2777,23 @@ class CBBsdlParser ( Parser ):
 
 
         def getRuleIndex(self):
-            return CBBsdlParser.RULE_cell_val
+            return CBBsdlParser.RULE_cell_safe
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterCell_val" ):
-                listener.enterCell_val(self)
+            if hasattr( listener, "enterCell_safe" ):
+                listener.enterCell_safe(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitCell_val" ):
-                listener.exitCell_val(self)
+            if hasattr( listener, "exitCell_safe" ):
+                listener.exitCell_safe(self)
 
 
 
 
-    def cell_val(self):
+    def cell_safe(self):
 
-        localctx = CBBsdlParser.Cell_valContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 66, self.RULE_cell_val)
+        localctx = CBBsdlParser.Cell_safeContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 66, self.RULE_cell_safe)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 358
@@ -2819,7 +2819,7 @@ class CBBsdlParser ( Parser ):
         return localctx
 
 
-    class Ctrl_cellContext(ParserRuleContext):
+    class Cell_ccellContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2831,23 +2831,23 @@ class CBBsdlParser ( Parser ):
 
 
         def getRuleIndex(self):
-            return CBBsdlParser.RULE_ctrl_cell
+            return CBBsdlParser.RULE_cell_ccell
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterCtrl_cell" ):
-                listener.enterCtrl_cell(self)
+            if hasattr( listener, "enterCell_ccell" ):
+                listener.enterCell_ccell(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitCtrl_cell" ):
-                listener.exitCtrl_cell(self)
+            if hasattr( listener, "exitCell_ccell" ):
+                listener.exitCell_ccell(self)
 
 
 
 
-    def ctrl_cell(self):
+    def cell_ccell(self):
 
-        localctx = CBBsdlParser.Ctrl_cellContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 68, self.RULE_ctrl_cell)
+        localctx = CBBsdlParser.Cell_ccellContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 68, self.RULE_cell_ccell)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 360
@@ -2861,7 +2861,7 @@ class CBBsdlParser ( Parser ):
         return localctx
 
 
-    class DisvalContext(ParserRuleContext):
+    class Cell_disvalContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2873,23 +2873,23 @@ class CBBsdlParser ( Parser ):
 
 
         def getRuleIndex(self):
-            return CBBsdlParser.RULE_disval
+            return CBBsdlParser.RULE_cell_disval
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterDisval" ):
-                listener.enterDisval(self)
+            if hasattr( listener, "enterCell_disval" ):
+                listener.enterCell_disval(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitDisval" ):
-                listener.exitDisval(self)
+            if hasattr( listener, "exitCell_disval" ):
+                listener.exitCell_disval(self)
 
 
 
 
-    def disval(self):
+    def cell_disval(self):
 
-        localctx = CBBsdlParser.DisvalContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 70, self.RULE_disval)
+        localctx = CBBsdlParser.Cell_disvalContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 70, self.RULE_cell_disval)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 362

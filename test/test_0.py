@@ -22,7 +22,7 @@ def get_test_params():
 
 
 class Test_0_BsdlParser:
-    @pytest.fixture(autouse=True, params=get_test_params())
+    @pytest.fixture(scope='class', autouse=True, params=get_test_params())
     @classmethod
     def setup_class(self, request):
         "Runs at start/setup of class"
@@ -38,10 +38,12 @@ class Test_0_BsdlParser:
         self.expected_bsr_len = int(request.param['bsr_len'])
         self.run_checks = request.param.get('run_checks', True)
         self.expected_bsr_cell = request.param.get('bsr_cell', '')
-        self.expected_bsr_data_cell = request.param.get('bsr_data_cell', '')
+        self.expected_bsr_cell_num = request.param.get('bsr_cell_num', '')
         self.expected_bsr_cell_type = request.param.get('bsr_cell_type', '')
-        self.expected_bsr_cell_desc = request.param.get('bsr_cell_desc', '')
+        self.expected_bsr_cell_port_name = request.param.get('bsr_cell_port_name', '')
         self.expected_bsr_cell_func = request.param.get('bsr_cell_func', '')
+        self.expected_bsr_cell_safe = request.param.get('bsr_cell_safe', '')
+
         self.expected_bsr_cell_val = request.param.get('bsr_cell_val', '')
         self.expected_bsr_ctrl_cell = request.param.get('bsr_ctrl_cell', 0)
         self.expected_bsr_disval = request.param.get('bsr_disval', 0)
@@ -102,7 +104,7 @@ class Test_0_BsdlParser:
         assert instr_opcode == self.expected_instr_opcode, \
             "Instruction opcode does not match expected value"
 
-    def test_bsr_length(self):
+    def test_bsr_len(self):
         print("Testing BSR length extraction")
         bsr_len = self.bdsl.get_bsr_len()
         print(f'bsr_length: {bsr_len}')
@@ -167,24 +169,22 @@ class Test_0_BsdlParser:
         # print(bsr)
         print(f'bsr[{self.expected_bsr_cell}: {bsr[self.expected_bsr_cell]}]')
 
-        # bsr_cell = self.bdsl.get_bsr_cell(self.expected_bsr_cell)
-        bsr_data_cell = self.bdsl.get_bsr_data_cell(self.expected_bsr_cell)
+        bsr_cell_num = self.bdsl.get_bsr_cell_num(self.expected_bsr_cell)
         bsr_cell_type = self.bdsl.get_bsr_cell_type(self.expected_bsr_cell)
-        bsr_cell_desc = self.bdsl.get_bsr_cell_desc(self.expected_bsr_cell)
+        bsr_cell_port_name = self.bdsl.get_bsr_cell_port_name(self.expected_bsr_cell)
         bsr_cell_func = self.bdsl.get_bsr_cell_func(self.expected_bsr_cell)
-        bsr_cell_val = self.bdsl.get_bsr_cell_val(self.expected_bsr_cell)
-        bsr_ctrl_cell = self.bdsl.get_bsr_ctrl_cell(self.expected_bsr_cell)
-        bsr_disval = self.bdsl.get_bsr_disval(self.expected_bsr_cell)
+        bsr_cell_safe = self.bdsl.get_bsr_cell_safe(self.expected_bsr_cell)
+        bsr_cell_ccell = self.bdsl.get_bsr_cell_ccell(self.expected_bsr_cell)
+        bsr_cell_disval = self.bdsl.get_bsr_cell_disval(self.expected_bsr_cell)
 
-        # assert bsr_cell == self.expected_bsr_cell
-        assert bsr_data_cell == self.expected_bsr_data_cell
+        assert bsr_cell_num == self.expected_bsr_cell_num
         assert bsr_cell_type == self.expected_bsr_cell_type
-        assert bsr_cell_desc == self.expected_bsr_cell_desc
+        assert bsr_cell_port_name == self.expected_bsr_cell_port_name
         assert bsr_cell_func == self.expected_bsr_cell_func
-        assert bsr_cell_val == self.expected_bsr_cell_val
+        assert bsr_cell_safe == self.expected_bsr_cell_safe
         if self.expected_bsr_ctrl_cell is not None:
-            assert bsr_ctrl_cell == self.expected_bsr_ctrl_cell
-            assert bsr_disval == self.expected_bsr_disval
+            assert bsr_cell_ccell == self.expected_bsr_ctrl_cell
+            assert bsr_cell_disval == self.expected_bsr_disval
 
 
 class Test_1_BSDLParserBlob(Test_0_BsdlParser):
