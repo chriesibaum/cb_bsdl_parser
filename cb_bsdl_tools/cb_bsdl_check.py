@@ -100,7 +100,6 @@ def process_folder(folder, log):
 
 
 def process_file(bsdl_file, log):
-    log.info(f'Starting to process BSDL file: {bsdl_file}')
 
     log.info('---------------------------------------------'
              '---------------------------------------------')
@@ -114,6 +113,41 @@ def process_file(bsdl_file, log):
 
     return error_count
 
+def process_error_summary(log_file, e_log_file, log):
+    if not os.path.isfile(log_file):
+        log.error(f'Log file does not exist: {log_file}')
+        return
+
+    file_error = False
+    file_logs = []
+    file_e_logs = []
+    file_start = True
+
+    with open(log_file, 'r') as f:
+        for line in f:
+            file_logs.append(line)
+
+            if '[INFO] -------' in line:
+                if file_error or  file_start:
+                    file_e_logs.append(file_logs)
+                file_logs = []
+                file_error = False
+                file_start = False
+
+            elif '[ERROR]' in line:
+                file_error = True
+
+            else:
+                continue
+
+    file_e_logs.append(file_logs)
+
+    # Write error summary to separate file
+    with open(e_log_file, 'w') as f:
+        for file_log in file_e_logs:
+            f.writelines(file_log)
+
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -125,6 +159,8 @@ def main():
                         help='Path to folder containing BSDL files')
     parser.add_argument('-l', '--log', action='store_true',
                         help='Enable logging to file')
+    parser.add_argument('--log_error_summary', action='store_true',
+                        help='Error log summary of results to a separate file')
 
     if len(sys.argv) == 1:
         parser.print_usage()
@@ -153,6 +189,8 @@ def main():
     log = CBLogger(log_to_file=args.log,
                    log_file_name=log_file)
 
+    log.info('---------------------------------------------'
+             '---------------------------------------------')
     log.info('Bonjour! - cb_bsdl_check')
     log.info(f'cb_bsdl_parser Version: {str(cb_bsdl_parser_version)}')
     log.info(f'Sys Platform: {sys.platform}')
@@ -169,6 +207,11 @@ def main():
         # check(bsdl, log)
 
         process_file(args.bsdl_file, log)
+
+    if args.log_error_summary:
+        e_log_file = os.path.join(log_folder, f'{folder_name}_summary.log')
+
+        process_error_summary(log_file, e_log_file, log)
 
 
 if __name__ == '__main__':  # pragma: no cover
